@@ -17,4 +17,9 @@
         <item name="elevation">0dp</item>
     </style>
 
+    <style name="pop" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/pop_show</item>
+        <item name="android:windowExitAnimation">@anim/pop_diss</item>
+    </style>
+
 </resources>

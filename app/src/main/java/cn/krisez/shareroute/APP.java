@@ -18,17 +18,6 @@ public class APP extends Application {
         super.onCreate();
         sContext = getApplicationContext();
         NetWorkUtils.INSTANCE().url("http://192.168.137.1:8080/");
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).login("")).handler(new ResultHandler() {
-            @Override
-            public void onSuccess(Result result) {
-
-            }
-
-            @Override
-            public void onFailed(String msg) {
-
-            }
-        });
     }
 
     public static Context getContext(){

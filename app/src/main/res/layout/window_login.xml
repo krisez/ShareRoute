@@ -24,8 +24,8 @@
                 android:id="@+id/et_login_account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_account"
-                android:drawableLeft="@drawable/ic_account"
+                android:drawableStart="@drawable/ic_phone"
+                android:drawableLeft="@drawable/ic_phone"
                 android:drawablePadding="@dimen/padding_content_areas"
                 android:hint="@string/phone_number"
                 android:imeOptions="actionNext"
@@ -44,6 +44,7 @@
                 android:lines="1" />
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/login_tips"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
