@@ -1,6 +1,7 @@
 package cn.krisez.shareroute.base;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -115,11 +116,27 @@ public abstract class BaseActivity extends AppCompatActivity implements RefreshV
     }
 
     @Override
-    public void errorOP(String s) {
+    public void error(String s) {
         toast(s);
         /*if (mLinearLayout.getRefreshState() == RefreshView.REFRESHING) {
             mLinearLayout.finishRefresh(false);
         }*/
+    }
+
+    @Override
+    public void handle(HandleType type,Bundle bundle) {
+        switch (type){
+            case INTENT:
+                startActivity(new Intent(this, (Class<?>) bundle.getSerializable("class")));
+                finish();
+                break;
+            case REFRESH:
+                break;
+            case NOTIFICATION:
+                break;
+            case OTHER:
+                break;
+        }
     }
 
     @Override

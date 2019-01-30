@@ -17,7 +17,8 @@ public class APP extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
-        NetWorkUtils.INSTANCE().url("http://192.168.137.1:8080/");
+        String url  = AppConfig.HOST + ":" + AppConfig.PORT + "/";
+        NetWorkUtils.INSTANCE().url(url);
     }
 
     public static Context getContext(){

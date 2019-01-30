@@ -4,4 +4,5 @@ import cn.krisez.shareroute.base.IBaseView
 
 interface ILoginView:IBaseView {
     fun showTips(tips:String)
+    fun registerSuccessful()
 }
