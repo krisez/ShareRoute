@@ -99,8 +99,9 @@ class LoginActivity : BaseActivity(), ILoginView {
         }
     }
 
+    private var tvTips : TextView? = null
     private fun setLayoutListener(layout: View, type: Int) {
-        val tvTips = layout.findViewById<TextView>(R.id.login_tips)
+        tvTips = layout.findViewById(R.id.login_tips)
         if (type == 1) {
             //登录
             val etAccount = layout.findViewById<EditText>(R.id.et_login_account)
@@ -115,10 +116,12 @@ class LoginActivity : BaseActivity(), ILoginView {
             val tvCode = layout.findViewById<TextView>(R.id.register_get_code)
             tvCode.setOnClickListener {
                 if (etAccount?.length() != 11) {
-                    error("请检查您的手机号！")
+                    tvTips?.text = "手机号有错误！"
+                    tvTips?.visibility = View.VISIBLE//TODO:删除
                     return@setOnClickListener
                 }
-                error("1234")
+                tvTips?.text = "验证码：1234"
+                tvTips?.visibility = View.VISIBLE
                 val animator = ValueAnimator.ofInt(60, 0)
                 animator.duration = 60000
                 animator.interpolator = LinearInterpolator()
@@ -138,6 +141,9 @@ class LoginActivity : BaseActivity(), ILoginView {
             layout.findViewById<Button>(R.id.btn_register).setOnClickListener {
                 if ("1234" == etCode.text.toString()) {
                     presenter!!.register(etAccount.text.toString())
+                }else{
+                    tvTips?.visibility = View.VISIBLE
+                    tvTips?.text = "验证码错误！"
                 }
             }
         }
@@ -156,17 +162,17 @@ class LoginActivity : BaseActivity(), ILoginView {
     }
 
     override fun showTips(tips: String) {
-        AlertDialog.Builder(this).setTitle("重要！")
-            .setMessage("请记住您的初始密码为[123456]！")
-            .setCancelable(false)
-            .setPositiveButton("已记住") { _, _ ->
-                toMain()
-            }
-            .show()
+        tvTips!!.visibility = View.VISIBLE
+        tvTips?.text = tips
+    }
+
+    override fun loginSuccess() {
+        toMain()
     }
 
     override fun registerSuccessful() {
         val editText = EditText(this)
+        editText.hint = "默认密码为：123456"
         AlertDialog.Builder(this).setTitle("请设置您的登录密码")
             .setView(editText)
             .setCancelable(false)
@@ -184,6 +190,7 @@ class LoginActivity : BaseActivity(), ILoginView {
         if (popupWindow != null && popupWindow!!.isShowing) {
             popupWindow!!.dismiss()
         }
+        ImClient.getInstance("${AppConfig.IM_URL}${SPUtil.getUserId()}").connect()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

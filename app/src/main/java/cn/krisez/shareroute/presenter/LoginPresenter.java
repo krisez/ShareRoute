@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @describe 用于登录和注册操作的分离
  */
-public class LoginPresenter extends Presenter{
+public class LoginPresenter extends Presenter {
 
     private ILoginView mView;
 
@@ -51,18 +51,18 @@ public class LoginPresenter extends Presenter{
 
     }
 
-    public void login(@NotNull String phone,@NotNull String password){
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).login(phone,password)).handler(new ResultHandler() {
+    public void login(@NotNull String phone, @NotNull String password) {
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).login(phone, password)).handler(new ResultHandler() {
             @Override
             public void onSuccess(Result result) {
                 User user = new Gson().fromJson(result.extra, User.class);
                 SPUtil.saveUserId(user.id);
-                mView.showTips(user.realName);
+                mView.loginSuccess();
             }
 
             @Override
             public void onFailed(String s) {
-                mView.error(s);
+                mView.showTips(s);
             }
         });
     }
@@ -73,6 +73,8 @@ public class LoginPresenter extends Presenter{
                     @Override
                     public void onSuccess(Result result) {
                         mView.registerSuccessful();
+                        User user = new Gson().fromJson(result.extra,User.class);
+                        SPUtil.saveUserId(user.id);
                     }
 
                     @Override

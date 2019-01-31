@@ -11,6 +11,7 @@ import cn.krisez.network.bean.Result;
 import cn.krisez.network.handler.ResultHandler;
 import cn.krisez.shareroute.base.HandleType;
 import cn.krisez.shareroute.base.IBaseView;
+import cn.krisez.shareroute.utils.SPUtil;
 
 /**
  * Created by Krisez on 2017-12-13.
@@ -41,7 +42,7 @@ public abstract class Presenter {
    abstract void attachIncomingIntent(Intent intent);//暂时没用到
 
     public void updatePw(String pw){
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).updatePw(pw))
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).updatePw(SPUtil.getUserId(),pw))
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {
@@ -52,7 +53,7 @@ public abstract class Presenter {
 
                     @Override
                     public void onFailed(String s) {
-
+                        mView.error(s);
                     }
                 });
     }

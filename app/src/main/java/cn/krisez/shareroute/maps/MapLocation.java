@@ -16,11 +16,11 @@ import cn.krisez.shareroute.utils.SPUtil;
 
 public class MapLocation implements AMapLocationListener {
     //声明mlocationClient对象
-    public AMapLocationClient mlocationClient;
+    private AMapLocationClient mlocationClient;
     //声明mLocationOption对象
-    public AMapLocationClientOption mLocationOption = null;
+    private AMapLocationClientOption mLocationOption = null;
 
-    public void startLo(Context context) {
+    void startLo(Context context) {
         mlocationClient = new AMapLocationClient(context);
         //初始化定位参数
         mLocationOption = new AMapLocationClientOption();
@@ -42,7 +42,7 @@ public class MapLocation implements AMapLocationListener {
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUserId(), aMapLocation.getLongitude() + "", aMapLocation.getLatitude() + ""))
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUserId(), aMapLocation.getLongitude() + "", aMapLocation.getLatitude() + "", aMapLocation.getSpeed()*3.6 + "", String.valueOf(aMapLocation.getBearing())))
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {
@@ -56,7 +56,7 @@ public class MapLocation implements AMapLocationListener {
                 });
     }
 
-    public void stopLocation() {
+    void stopLocation() {
         if (mlocationClient != null)
             mlocationClient.stopLocation();
     }
