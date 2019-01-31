@@ -42,7 +42,7 @@ public class MapLocation implements AMapLocationListener {
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUserId(), aMapLocation.getLongitude() + "", aMapLocation.getLatitude() + "", aMapLocation.getSpeed()*3.6 + "", String.valueOf(aMapLocation.getBearing())))
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUserId(), aMapLocation.getLatitude() + "", aMapLocation.getLongitude() + "", aMapLocation.getSpeed()*3.6 + "", String.valueOf(aMapLocation.getBearing())))
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {

@@ -22,6 +22,7 @@ import cn.krisez.kotlin.net.API
 import cn.krisez.network.bean.Result
 import cn.krisez.network.handler.ResultHandler
 import cn.krisez.shareroute.R
+import cn.krisez.shareroute.bean.TrackPoint
 import cn.krisez.shareroute.bean.User
 import cn.krisez.shareroute.utils.SPUtil
 import com.amap.api.maps.CameraUpdateFactory
@@ -45,9 +46,6 @@ class MainActivity : CheckPermissionsActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-
-        /*val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)*/
 
         mMapView = findViewById(R.id.mv_show_me_other)
         mLocateO = findViewById(R.id.ib_locate_other)
@@ -92,24 +90,28 @@ class MainActivity : CheckPermissionsActivity() {
 
     fun locateOthers(view: View) {
         NetWorkUtils.INSTANCE().create(NetWorkUtils.NetApi().api(API::class.java).getOtherPos(SPUtil.getOtherInfo()))
-                .handler(object :ResultHandler{
-                    override fun onSuccess(result: Result?) {
-                        val s = result?.extra
-                        Log.d("main",s)
-                        /*val userInfo = Gson().fromJson(s, User::class.java)
-                        val latLng = LatLng(userInfo.lat,userInfo.lon)
-                        Log.d("locate",latLng.toString())
-                        mAMap!!.animateCamera(CameraUpdateFactory.changeLatLng(latLng))
-                        controller!!.setMarkerOption(
-                                MarkerOptions().title(SPUtil.getOtherInfo())
-                                        .position(latLng))*/
-                    }
+            .handler(object : ResultHandler {
+                override fun onSuccess(result: Result?) {
+                    val s = result?.extra
+                    Log.d("MainActivity", "onSuccess:$s")
+                    val point = Gson().fromJson(s, TrackPoint::class.java)
+                    val lat = java.lang.Double.parseDouble(point.lat)
+                    val lng = java.lang.Double.parseDouble(point.lng)
+                    val direction = java.lang.Float.parseFloat(point.direction)
+                    val latLng = LatLng(lat,lng)
+                    mAMap!!.animateCamera(CameraUpdateFactory.changeLatLng(latLng))
+                    controller!!.setMarkerOption(
+                        MarkerOptions().title(SPUtil.getOtherInfo())
+                            .rotateAngle(direction)
+                            .position(latLng)
+                    )
+                }
 
-                    override fun onFailed(msg: String?) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
+                override fun onFailed(msg: String?) {
+                    Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                }
 
-                })
+            })
     }
 
     override fun onResume() {
