@@ -61,13 +61,6 @@ class LoginActivity : BaseActivity(), ILoginView {
         }
     }
 
-    private fun startLoginAndGo(ss: String) {
-        SPUtil.saveUserId(ss)
-        ImClient.getInstance("${AppConfig.IM_URL}$ss").connect()
-        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-        finish()
-    }
-
     override fun onRefresh() {
         toast("")
     }
