@@ -78,19 +78,18 @@ class LoginActivity : BaseActivity(), ILoginView {
         }
         val id = if (type == 1) R.layout.window_login else R.layout.window_register
         val constraintLayout = layoutInflater.inflate(id, null)
-        val popupWindow =
-            PopupWindow(constraintLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.isFocusable = true
+        popupWindow = PopupWindow(constraintLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow!!.isFocusable = true
         //点击空白处时，隐藏掉pop窗口
-        popupWindow.isFocusable = true
+        popupWindow!!.isFocusable = true
         //popupWindow.setBackgroundDrawable(BitmapDrawable())
         //添加弹出、弹入的动画
-        popupWindow.animationStyle = R.style.pop
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, -150)
+        popupWindow!!.animationStyle = R.style.pop
+        popupWindow!!.showAtLocation(view, Gravity.CENTER, 0, -150)
         //添加按键事件监听
         setLayoutListener(constraintLayout, type)
         //添加pop窗口关闭事件，主要是实现关闭时改变背景的透明度
-        popupWindow.setOnDismissListener {
+        popupWindow!!.setOnDismissListener {
             val animator = ValueAnimator.ofFloat(0.5f, 1f)
             animator.duration = 500
             animator.addUpdateListener {
@@ -161,8 +160,7 @@ class LoginActivity : BaseActivity(), ILoginView {
             .setMessage("请记住您的初始密码为[123456]！")
             .setCancelable(false)
             .setPositiveButton("已记住") { _, _ ->
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
+                toMain()
             }
             .show()
     }
@@ -177,11 +175,17 @@ class LoginActivity : BaseActivity(), ILoginView {
             }
             .setNegativeButton("跳过") { _, _ ->
                 error("未设置密码")
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
+                toMain()
             }
             .show()
     }
 
+    private fun toMain() {
+        if (popupWindow != null && popupWindow!!.isShowing) {
+            popupWindow!!.dismiss()
+        }
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
 
 }

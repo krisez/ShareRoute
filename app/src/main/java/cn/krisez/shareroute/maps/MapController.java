@@ -28,6 +28,7 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     private TextureMapView mTextureMapView;
     private AMap mMap;
     private MyLocationStyle myLocationStyle;
+    private MapLocation mapLocation;
     //private IMainView mView;
 
     public MapController(Context context) {
@@ -76,8 +77,8 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
         mMap.setMyLocationEnabled(true);
 
         //开启定位
-        MapLocation location = new MapLocation();
-        location.startLo(mContext);
+        mapLocation = new MapLocation();
+        mapLocation.startLo(mContext);
 
         mMap.setOnCameraChangeListener(new AMap.OnCameraChangeListener() {
             @Override
@@ -184,7 +185,9 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
         if (mContext != null) {
             mContext = null;
         }
-
+        if (mapLocation != null) {
+            mapLocation.stopLocation();
+        }
         MapTrace.INSTANCE().destroy();
     }
 

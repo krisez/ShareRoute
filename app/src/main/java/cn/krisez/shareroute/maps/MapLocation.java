@@ -29,7 +29,7 @@ public class MapLocation implements AMapLocationListener {
         //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         //设置定位间隔,单位毫秒,默认为2000ms
-        mLocationOption.setInterval(5 * 60 * 1000);
+        mLocationOption.setInterval(5 * 1000);
         //设置定位参数
         mlocationClient.setLocationOption(mLocationOption);
         // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
@@ -46,7 +46,7 @@ public class MapLocation implements AMapLocationListener {
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {
-                        Log.d("MapController", "onNext:" + result.statue);
+                        Log.d("MapLocation", "onSuccess:" + result.statue);
                     }
 
                     @Override
@@ -54,5 +54,10 @@ public class MapLocation implements AMapLocationListener {
 
                     }
                 });
-       }
+    }
+
+    public void stopLocation() {
+        if (mlocationClient != null)
+            mlocationClient.stopLocation();
+    }
 }
