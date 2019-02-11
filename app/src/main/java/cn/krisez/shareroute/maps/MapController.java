@@ -77,8 +77,10 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
         mMap.setMyLocationEnabled(true);
 
         //开启定位
-        mapLocation = new MapLocation();
-        mapLocation.startLo(mContext);
+        if (mapLocation == null) {
+            mapLocation = new MapLocation();
+            mapLocation.startLo(mContext);
+        }
 
         mMap.setOnCameraChangeListener(new AMap.OnCameraChangeListener() {
             @Override

@@ -1,5 +1,6 @@
 package cn.krisez.shareroute.maps;
 
+import android.app.Notification;
 import android.content.Context;
 import android.util.Log;
 
@@ -30,8 +31,12 @@ public class MapLocation implements AMapLocationListener {
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         //设置定位间隔,单位毫秒,默认为2000ms
         mLocationOption.setInterval(5 * 1000);
+        //传感器加载
+        mLocationOption.setSensorEnable(true);
         //设置定位参数
         mlocationClient.setLocationOption(mLocationOption);
+        //后台定位
+//        mlocationClient.enableBackgroundLocation(1,new Notification());
         // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
         // 注意设置合适的定位时间的间隔（最小间隔支持为1000ms），并且在合适时间调用stopLocation()方法来取消定位请求
         // 在定位结束后，在合适的生命周期调用onDestroy()方法
@@ -46,6 +51,11 @@ public class MapLocation implements AMapLocationListener {
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {
+                        Log.d("MapLocation", "onSuccess:" + aMapLocation.getLocationType());
+                        Log.d("MapLocation", "onSuccess:" + aMapLocation.getProvider());
+                        Log.d("MapLocation", "onSuccess:" + "---------------");
+                        Log.d("MapLocation", "onSuccess:" + aMapLocation.getSpeed());
+                        Log.d("MapLocation", "onSuccess:" + aMapLocation.getBearing());
                         Log.d("MapLocation", "onSuccess:" + result.statue);
                     }
 
@@ -57,7 +67,12 @@ public class MapLocation implements AMapLocationListener {
     }
 
     void stopLocation() {
-        if (mlocationClient != null)
+        if (mlocationClient != null) {
+//            mlocationClient.disableBackgroundLocation(true);
             mlocationClient.stopLocation();
+            mlocationClient.unRegisterLocationListener(this);
+            mlocationClient.onDestroy();
+
+        }
     }
 }
