@@ -35,6 +35,12 @@ class LoginActivity : BaseActivity(), ILoginView {
     }
 
     override fun init(bundle: Bundle?) {
+
+        if ("" != SPUtil.getUserId()) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+
         findViewById<ImageView>(R.id.iv_login_sign_in).setOnClickListener {
             val animator = ValueAnimator.ofFloat(1f, 0.5f)
             animator.duration = 1000
@@ -55,10 +61,6 @@ class LoginActivity : BaseActivity(), ILoginView {
             popupWindow(it, 2)
         }
 
-        if (SPUtil.getUserId() != "") {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }
     }
 
     override fun onRefresh() {
@@ -71,7 +73,8 @@ class LoginActivity : BaseActivity(), ILoginView {
         }
         val id = if (type == 1) R.layout.window_login else R.layout.window_register
         val constraintLayout = layoutInflater.inflate(id, null)
-        popupWindow = PopupWindow(constraintLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow =
+            PopupWindow(constraintLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow!!.isFocusable = true
         //点击空白处时，隐藏掉pop窗口
         popupWindow!!.isFocusable = true
@@ -92,7 +95,7 @@ class LoginActivity : BaseActivity(), ILoginView {
         }
     }
 
-    private var tvTips : TextView? = null
+    private var tvTips: TextView? = null
     private fun setLayoutListener(layout: View, type: Int) {
         tvTips = layout.findViewById(R.id.login_tips)
         if (type == 1) {
@@ -134,7 +137,7 @@ class LoginActivity : BaseActivity(), ILoginView {
             layout.findViewById<Button>(R.id.btn_register).setOnClickListener {
                 if ("1234" == etCode.text.toString()) {
                     presenter!!.register(etAccount.text.toString())
-                }else{
+                } else {
                     tvTips?.visibility = View.VISIBLE
                     tvTips?.text = "验证码错误！"
                 }
@@ -170,7 +173,12 @@ class LoginActivity : BaseActivity(), ILoginView {
             .setView(editText)
             .setCancelable(false)
             .setPositiveButton("确定") { _, _ ->
-                presenter!!.updatePw(editText.text.toString())
+                if ("" == editText.text.toString()) {
+                    error("未设置密码")
+                    toMain()
+                } else {
+                    presenter!!.updatePw(editText.text.toString())
+                }
             }
             .setNegativeButton("跳过") { _, _ ->
                 error("未设置密码")
@@ -180,7 +188,7 @@ class LoginActivity : BaseActivity(), ILoginView {
     }
 
     private fun toMain() {
-        if (popupWindow != null && popupWindow!!.isShowing) {
+        if (popupWindow!!.isShowing) {
             popupWindow!!.dismiss()
         }
         ImClient.getInstance("${AppConfig.IM_URL}${SPUtil.getUserId()}").connect()
