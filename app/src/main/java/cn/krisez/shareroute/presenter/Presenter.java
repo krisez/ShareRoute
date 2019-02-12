@@ -42,7 +42,7 @@ public abstract class Presenter {
    abstract void attachIncomingIntent(Intent intent);//暂时没用到
 
     public void updatePw(String pw){
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).updatePw(SPUtil.getUserId(),pw))
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).updatePw(SPUtil.getUser().id,pw))
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {

@@ -1,6 +1,5 @@
 package cn.krisez.shareroute.maps;
 
-import android.app.Notification;
 import android.content.Context;
 import android.util.Log;
 
@@ -47,15 +46,21 @@ public class MapLocation implements AMapLocationListener {
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUserId(), aMapLocation.getLatitude() + "", aMapLocation.getLongitude() + "", aMapLocation.getSpeed()*3.6 + "", String.valueOf(aMapLocation.getBearing())))
+        String lat = String.valueOf(aMapLocation.getLatitude());
+        String lng = String.valueOf(aMapLocation.getLongitude());
+        String speed = String.valueOf(aMapLocation.getSpeed() * 3.6f);
+        String bearing = String.valueOf(aMapLocation.getBearing());
+        Log.d("MapLocation", "onLocationChanged:" + "---------------");
+        Log.d("MapLocation", "onLocationChanged:" + aMapLocation.getProvider());
+        Log.d("MapLocation", "onLocationChanged:" + lat);
+        Log.d("MapLocation", "onLocationChanged:" + lng);
+        Log.d("MapLocation", "onLocationChanged:" + speed);
+        Log.d("MapLocation", "onLocationChanged:" + bearing);
+        Log.d("MapLocation", "onLocationChanged:" + "---------------");
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUser().id, lat, lng, speed, bearing))
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {
-                        Log.d("MapLocation", "onSuccess:" + aMapLocation.getLocationType());
-                        Log.d("MapLocation", "onSuccess:" + aMapLocation.getProvider());
-                        Log.d("MapLocation", "onSuccess:" + "---------------");
-                        Log.d("MapLocation", "onSuccess:" + aMapLocation.getSpeed());
-                        Log.d("MapLocation", "onSuccess:" + aMapLocation.getBearing());
                         Log.d("MapLocation", "onSuccess:" + result.statue);
                     }
 

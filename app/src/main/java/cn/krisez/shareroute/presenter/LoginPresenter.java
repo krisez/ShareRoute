@@ -15,9 +15,6 @@ import cn.krisez.shareroute.utils.SPUtil;
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-
 /**
  * @describe 用于登录和注册操作的分离
  */
@@ -60,7 +57,7 @@ public class LoginPresenter extends Presenter {
             @Override
             public void onSuccess(Result result) {
                 User user = new Gson().fromJson(result.extra, User.class);
-                SPUtil.saveUserId(user.id);
+                SPUtil.saveUser(user);
                 mView.loginSuccess();
             }
 
@@ -78,7 +75,7 @@ public class LoginPresenter extends Presenter {
                     public void onSuccess(Result result) {
                         mView.registerSuccessful();
                         User user = new Gson().fromJson(result.extra,User.class);
-                        SPUtil.saveUserId(user.id);
+                        SPUtil.saveUser(user);
                     }
 
                     @Override

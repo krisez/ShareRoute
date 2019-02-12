@@ -57,8 +57,6 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
         return this;
     }*/
 
-    private boolean isFirst = true;
-
     public MapController defaultAmap() {
 
         //显示定位按钮是否可以点击
@@ -67,7 +65,8 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
         mMap.moveCamera(CameraUpdateFactory.zoomTo(16.5f));
         //定位按钮显示
         myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+        myLocationStyle.interval(2000);
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.w));
         myLocationStyle.strokeColor(Color.WHITE);
         myLocationStyle.radiusFillColor(Color.argb(100, 20, 12, 20));
@@ -82,22 +81,6 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
             mapLocation.startLo(mContext);
         }
 
-        mMap.setOnCameraChangeListener(new AMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-
-            }
-
-            @Override
-            public void onCameraChangeFinish(CameraPosition cameraPosition) {
-                if (isFirst) {
-                    myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
-                    myLocationStyle.interval(2000);
-                    mMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
-                    isFirst = false;
-                }
-            }
-        });
         return this;
     }
 

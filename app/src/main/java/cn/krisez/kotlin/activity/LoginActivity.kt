@@ -36,7 +36,7 @@ class LoginActivity : BaseActivity(), ILoginView {
 
     override fun init(bundle: Bundle?) {
 
-        if ("" != SPUtil.getUserId()) {
+        if (null != SPUtil.getUser()) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
@@ -191,7 +191,7 @@ class LoginActivity : BaseActivity(), ILoginView {
         if (popupWindow!!.isShowing) {
             popupWindow!!.dismiss()
         }
-        ImClient.getInstance("${AppConfig.IM_URL}${SPUtil.getUserId()}").connect()
+        ImClient.getInstance("${AppConfig.IM_URL}${SPUtil.getUser()}").connect()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
