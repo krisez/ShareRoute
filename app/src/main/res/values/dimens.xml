@@ -55,4 +55,6 @@
 
     <dimen name="btn_card_radius">6dp</dimen>
 
+    <dimen name="main_margin_common">16dp</dimen>
+
 </resources>

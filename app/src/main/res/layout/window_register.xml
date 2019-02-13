@@ -36,8 +36,6 @@
                 android:id="@+id/register_code"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_password"
-                android:drawableLeft="@drawable/ic_password"
                 android:hint="@string/verification_code"
                 app:layout_constraintBottom_toTopOf="@id/login_tips"
                 app:layout_constraintEnd_toStartOf="@id/register_get_code"

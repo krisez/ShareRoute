@@ -191,7 +191,7 @@ class LoginActivity : BaseActivity(), ILoginView {
         if (popupWindow!!.isShowing) {
             popupWindow!!.dismiss()
         }
-        ImClient.getInstance("${AppConfig.IM_URL}${SPUtil.getUser()}").connect()
+        ImClient.getInstance("${AppConfig.IM_URL}${SPUtil.getUser().id}").connect()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

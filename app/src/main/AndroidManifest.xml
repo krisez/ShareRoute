@@ -30,6 +30,7 @@
         android:supportsRtl="true"
         android:name=".APP"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name="cn.krisez.kotlin.activity.LoginActivity"
             android:windowSoftInputMode="adjustPan">
