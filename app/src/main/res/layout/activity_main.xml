@@ -7,24 +7,24 @@
     tools:context="cn.krisez.kotlin.activity.MainActivity">
 
     <com.amap.api.maps.MapView
-        android:id="@+id/mv_show_me_other"
+        android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/main_user_layout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent">
 
         <cn.krisez.shareroute.widget.CircleImageView
             android:id="@+id/main_user_avatar"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_margin="@dimen/main_margin_common"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_launcher"
-            android:layout_margin="@dimen/main_margin_common"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,26 +32,118 @@
             android:id="@+id/main_user_nick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="天上地下"
-            android:textColor="@color/black"
+            android:layout_marginStart="@dimen/main_margin_common"
             android:layout_marginLeft="@dimen/main_margin_common"
+            android:textColor="@color/black"
             android:textSize="@dimen/text_title"
+            app:layout_constraintBottom_toTopOf="@id/main_user_id"
             app:layout_constraintStart_toEndOf="@id/main_user_avatar"
             app:layout_constraintTop_toTopOf="@id/main_user_avatar"
-            app:layout_constraintBottom_toTopOf="@id/main_user_id"
-            android:layout_marginStart="@dimen/main_margin_common" />
+            app:layout_constraintVertical_chainStyle="spread_inside"
+            tools:text="天上地下" />
+
         <TextView
             android:id="@+id/main_user_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            tools:text="1900000"
+            android:layout_marginStart="@dimen/main_margin_common"
             android:layout_marginLeft="@dimen/main_margin_common"
+            android:textColor="@color/black"
             android:textSize="@dimen/text_subhead"
+            app:layout_constraintBottom_toBottomOf="@id/main_user_avatar"
             app:layout_constraintStart_toEndOf="@id/main_user_avatar"
             app:layout_constraintTop_toBottomOf="@id/main_user_nick"
-            app:layout_constraintBottom_toBottomOf="@id/main_user_avatar"
-            android:layout_marginStart="@dimen/main_margin_common" />
+            tools:text="1900000" />
+
+        <ImageView
+            android:id="@+id/main_user_setup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/main_margin_common"
+            android:src="@drawable/ic_setup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/main_user_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/main_margin_common"
+            android:layout_marginRight="@dimen/main_margin_common"
+            android:src="@drawable/ic_help"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_user_setup" />
+
+        <ImageView
+            android:id="@+id/main_user_urgent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/main_margin_common"
+            android:layout_marginRight="@dimen/main_margin_common"
+            android:src="@drawable/ic_flashlight"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_user_help" />
+
+        <TextView
+            android:id="@+id/main_user_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/main_margin_common"
+            android:textSize="@dimen/text_body"
+            app:layout_constraintTop_toBottomOf="@id/main_user_avatar"
+            tools:text="重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学"
+            />
+
+        <LinearLayout
+            android:id="@+id/main_user_tool"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_content_areas"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_user_address">
+
+            <ImageView
+                android:id="@+id/main_user_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_message" />
+
+            <ImageView
+                android:id="@+id/main_user_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/main_margin_common"
+                android:layout_marginLeft="@dimen/main_margin_common"
+                android:src="@drawable/ic_history" />
+
+            <ImageView
+                android:id="@+id/main_user_upload_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/main_margin_common"
+                android:layout_marginLeft="@dimen/main_margin_common"
+                android:src="@drawable/ic_upload" />
+            <ImageView
+                android:id="@+id/main_user_mail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_mail"
+                android:layout_marginStart="@dimen/main_margin_common"
+                android:layout_marginLeft="@dimen/main_margin_common"
+                />
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="1dp"/>
+            <ImageView
+                android:id="@+id/main_tool_op"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_packup"
+                />
+        </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout

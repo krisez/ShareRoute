@@ -3,10 +3,9 @@ package cn.krisez.shareroute;
 import android.app.Application;
 import android.content.Context;
 
-import cn.krisez.kotlin.net.API;
 import cn.krisez.network.NetWorkUtils;
-import cn.krisez.network.bean.Result;
-import cn.krisez.network.handler.ResultHandler;
+import cn.krisez.shareroute.utils.Const;
+import cn.krisez.shareroute.utils.SPUtil;
 
 
 public class APP extends Application {
@@ -19,6 +18,7 @@ public class APP extends Application {
         sContext = getApplicationContext();
         String url  = AppConfig.HOST  /*+ ":" + AppConfig.PORT*/ ;
         NetWorkUtils.INSTANCE().url(url);
+        Const.uploadLocation = SPUtil.isAutoUploadLocation();
     }
 
     public static Context getContext(){

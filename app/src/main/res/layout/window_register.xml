@@ -26,10 +26,10 @@
                 android:drawableStart="@drawable/ic_phone"
                 android:drawableLeft="@drawable/ic_phone"
                 android:hint="@string/phone_number"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionNext"
                 android:inputType="number"
                 android:lines="1"
-                android:maxLines="11"
+                android:maxLength="11"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
@@ -37,6 +37,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/verification_code"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:lines="1"
                 app:layout_constraintBottom_toTopOf="@id/login_tips"
                 app:layout_constraintEnd_toStartOf="@id/register_get_code"
                 app:layout_constraintStart_toStartOf="parent"

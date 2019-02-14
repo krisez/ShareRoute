@@ -8,10 +8,14 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 
+import org.greenrobot.eventbus.EventBus;
+
 import cn.krisez.kotlin.net.API;
 import cn.krisez.network.NetWorkUtils;
 import cn.krisez.network.bean.Result;
 import cn.krisez.network.handler.ResultHandler;
+import cn.krisez.shareroute.event.LocationEvent;
+import cn.krisez.shareroute.utils.Const;
 import cn.krisez.shareroute.utils.SPUtil;
 
 public class MapLocation implements AMapLocationListener {
@@ -57,18 +61,21 @@ public class MapLocation implements AMapLocationListener {
         Log.d("MapLocation", "onLocationChanged:" + speed);
         Log.d("MapLocation", "onLocationChanged:" + bearing);
         Log.d("MapLocation", "onLocationChanged:" + "---------------");
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUser().id, lat, lng, speed, bearing))
-                .handler(new ResultHandler() {
-                    @Override
-                    public void onSuccess(Result result) {
-                        Log.d("MapLocation", "onSuccess:" + result.statue);
-                    }
+        EventBus.getDefault().post(new LocationEvent(aMapLocation.getAddress()));
+        if (Const.uploadLocation) {
+            NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUser().id, lat, lng, speed, bearing))
+                    .handler(new ResultHandler() {
+                        @Override
+                        public void onSuccess(Result result) {
+                            Log.d("MapLocation", "onSuccess:" + result.statue);
+                        }
 
-                    @Override
-                    public void onFailed(String msg) {
+                        @Override
+                        public void onFailed(String msg) {
 
-                    }
-                });
+                        }
+                    });
+        }
     }
 
     void stopLocation() {

@@ -9,4 +9,5 @@
     <color name="light_gray">#cacaca</color>
     <color name="dark_gray">#4f4f4f</color>
     <color name="yellow">#ffff00</color>
+    <color name="vector_reset">#2c2c2c</color>
 </resources>
