@@ -15,6 +15,7 @@ import cn.krisez.network.NetWorkUtils;
 import cn.krisez.network.bean.Result;
 import cn.krisez.network.handler.ResultHandler;
 import cn.krisez.shareroute.event.LocationEvent;
+import cn.krisez.shareroute.event.MyLocationEvent;
 import cn.krisez.shareroute.utils.Const;
 import cn.krisez.shareroute.utils.SPUtil;
 
@@ -24,7 +25,12 @@ public class MapLocation implements AMapLocationListener {
     //声明mLocationOption对象
     private AMapLocationClientOption mLocationOption = null;
 
-    void startLo(Context context) {
+    private String mLat;
+    private String mLng;
+    private String mSpeed;
+    private String mBearing;
+
+    void startLocate(Context context) {
         mlocationClient = new AMapLocationClient(context);
         //初始化定位参数
         mLocationOption = new AMapLocationClientOption();
@@ -50,24 +56,16 @@ public class MapLocation implements AMapLocationListener {
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
-        String lat = String.valueOf(aMapLocation.getLatitude());
-        String lng = String.valueOf(aMapLocation.getLongitude());
-        String speed = String.valueOf(aMapLocation.getSpeed() * 3.6f);
-        String bearing = String.valueOf(aMapLocation.getBearing());
-        Log.d("MapLocation", "onLocationChanged:" + "---------------");
-        Log.d("MapLocation", "onLocationChanged:" + aMapLocation.getProvider());
-        Log.d("MapLocation", "onLocationChanged:" + lat);
-        Log.d("MapLocation", "onLocationChanged:" + lng);
-        Log.d("MapLocation", "onLocationChanged:" + speed);
-        Log.d("MapLocation", "onLocationChanged:" + bearing);
-        Log.d("MapLocation", "onLocationChanged:" + "---------------");
-        EventBus.getDefault().post(new LocationEvent(aMapLocation.getAddress()));
+        mLat = String.valueOf(aMapLocation.getLatitude());
+        mLng = String.valueOf(aMapLocation.getLongitude());
+        mSpeed = String.valueOf(aMapLocation.getSpeed() * 3.6f);
+        mBearing = String.valueOf(aMapLocation.getBearing());
+        EventBus.getDefault().post(new MyLocationEvent(mLat,mLng,mSpeed,mBearing,aMapLocation.getAddress()));
         if (Const.uploadLocation) {
-            NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUser().id, lat, lng, speed, bearing))
+            NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUser().id, mLat, mLng, mSpeed, mBearing))
                     .handler(new ResultHandler() {
                         @Override
                         public void onSuccess(Result result) {
-                            Log.d("MapLocation", "onSuccess:" + result.statue);
                         }
 
                         @Override

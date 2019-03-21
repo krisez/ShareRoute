@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cn.krisez.kotlin.activity.MainActivity">
+    tools:context="cn.krisez.kotlin.ui.activity.MainActivity">
 
     <com.amap.api.maps.MapView
         android:id="@+id/map_view"
@@ -18,13 +18,13 @@
         android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent">
 
-        <cn.krisez.shareroute.widget.CircleImageView
+        <cn.krisez.framework.widget.CircleImageView
             android:id="@+id/main_user_avatar"
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_margin="@dimen/main_margin_common"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/ic_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,9 +60,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/main_margin_common"
-            android:src="@drawable/ic_setup"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_setup" />
 
         <ImageView
             android:id="@+id/main_user_help"
@@ -71,9 +71,9 @@
             android:layout_marginTop="@dimen/margin_small"
             android:layout_marginEnd="@dimen/main_margin_common"
             android:layout_marginRight="@dimen/main_margin_common"
-            android:src="@drawable/ic_help"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/main_user_setup" />
+            app:layout_constraintTop_toBottomOf="@id/main_user_setup"
+            app:srcCompat="@drawable/ic_help" />
 
         <ImageView
             android:id="@+id/main_user_urgent"
@@ -82,9 +82,9 @@
             android:layout_marginTop="@dimen/margin_small"
             android:layout_marginEnd="@dimen/main_margin_common"
             android:layout_marginRight="@dimen/main_margin_common"
-            android:src="@drawable/ic_flashlight"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/main_user_help" />
+            app:layout_constraintTop_toBottomOf="@id/main_user_help"
+            app:srcCompat="@drawable/ic_flashlight" />
 
         <TextView
             android:id="@+id/main_user_address"
@@ -93,8 +93,7 @@
             android:layout_margin="@dimen/main_margin_common"
             android:textSize="@dimen/text_body"
             app:layout_constraintTop_toBottomOf="@id/main_user_avatar"
-            tools:text="重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学"
-            />
+            tools:text="重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学重庆邮电大学" />
 
         <LinearLayout
             android:id="@+id/main_user_tool"
@@ -104,11 +103,24 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_user_address">
 
-            <ImageView
-                android:id="@+id/main_user_message"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_message" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/main_user_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_message" />
+
+                <ImageView
+                    android:id="@+id/main_msg_tips_dot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@id/main_user_message"
+                    android:layout_alignRight="@id/main_user_message"
+                    android:src="@drawable/ic_little_red_dot"/>
+            </RelativeLayout>
 
             <ImageView
                 android:id="@+id/main_user_history"
@@ -116,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/main_margin_common"
                 android:layout_marginLeft="@dimen/main_margin_common"
-                android:src="@drawable/ic_history" />
+                app:srcCompat="@drawable/ic_history" />
 
             <ImageView
                 android:id="@+id/main_user_upload_location"
@@ -124,27 +136,38 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/main_margin_common"
                 android:layout_marginLeft="@dimen/main_margin_common"
-                android:src="@drawable/ic_upload" />
+                app:srcCompat="@drawable/ic_upload" />
+
             <ImageView
                 android:id="@+id/main_user_mail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_mail"
                 android:layout_marginStart="@dimen/main_margin_common"
                 android:layout_marginLeft="@dimen/main_margin_common"
-                />
+                app:srcCompat="@drawable/ic_mail" />
+
             <View
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="1dp"/>
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
             <ImageView
                 android:id="@+id/main_tool_op"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_packup"
-                />
+                app:srcCompat="@drawable/ic_packup" />
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
+
+    <ImageButton
+        android:id="@+id/move_my_locate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:background="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_user_layout"
+        app:srcCompat="@drawable/ic_locate" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/csl_getInfo"
@@ -179,8 +202,8 @@
         android:layout_height="24dp"
         android:layout_margin="@dimen/margin_small"
         android:onClick="locateOthers"
-        android:src="@drawable/ic_account"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_account" />
 
 </android.support.constraint.ConstraintLayout>

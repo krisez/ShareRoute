@@ -20,14 +20,15 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/ic_login" />
+            app:srcCompat="@drawable/ic_login"
+            />
 
         <ImageView
             android:id="@+id/iv_login_sign_up"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/ic_registered" />
+            app:srcCompat="@drawable/ic_registered" />
     </LinearLayout>
 
     <View

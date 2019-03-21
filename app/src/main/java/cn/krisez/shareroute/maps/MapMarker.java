@@ -20,9 +20,9 @@ public class MapMarker {
 
     public Marker getMarker(MarkerOptions options) {
         mOptions = new MarkerOptions();
-        mOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher_background));
+        mOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.w));
         mOptions.position(new LatLng(29.617103,106.499397));
-        mOptions.title("car").snippet("animate").setFlat(true);
+        mOptions.title("player").snippet("locate").setFlat(true);
         mOptions.anchor(0.5f,0.5f);
         mOptions = options !=null ? options:mOptions;
         mMarker = mAMap.addMarker(mOptions);

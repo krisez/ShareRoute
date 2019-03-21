@@ -34,15 +34,4 @@ public class SPUtil {
         return sharedPreferences.getString("info_id","");
     }
 
-    public static void setAutoUploadLocation(boolean upload){
-        SharedPreferences.Editor editor = APP.getContext().getSharedPreferences("upload_location",Context.MODE_PRIVATE).edit();
-        editor.putBoolean("upload",upload);
-        editor.apply();
-    }
-
-    public static boolean isAutoUploadLocation(){
-        SharedPreferences sharedPreferences = APP.getContext().getSharedPreferences("upload_location",Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean("upload",false);
-    }
-
 }

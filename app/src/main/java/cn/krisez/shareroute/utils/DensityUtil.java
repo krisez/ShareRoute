@@ -62,8 +62,9 @@ public class DensityUtil {
         return outMetrics.heightPixels;
     }
 
-    public static String strDate(Calendar calendar){
-        return calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH)+1) + "/" + calendar.get(Calendar.DAY_OF_MONTH);
+    public static String strDate(Calendar calendar) {
+        return calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH)
+                +" "+ calendar.get(Calendar.HOUR_OF_DAY) +":"+ calendar.get(Calendar.MINUTE) +":"+ calendar.get(Calendar.SECOND);
     }
 
     /**
@@ -147,23 +148,23 @@ public class DensityUtil {
         }
     }
 
-    public static String compressImage(String filePath, String targetPath, int quality)  {
+    public static String compressImage(String filePath, String targetPath, int quality) {
         Bitmap bm = getSmallBitmap(filePath);//获取一定尺寸的图片
         int degree = readPictureDegree(filePath);//获取相片拍摄角度
-        if(degree!=0){//旋转照片角度，防止头像横着显示
-            bm=rotateBitmap(bm,degree);
+        if (degree != 0) {//旋转照片角度，防止头像横着显示
+            bm = rotateBitmap(bm, degree);
         }
-        File outputFile=new File(targetPath);
+        File outputFile = new File(targetPath);
         try {
             if (!outputFile.exists()) {
                 outputFile.getParentFile().mkdirs();
                 //outputFile.createNewFile();
-            }else{
+            } else {
                 outputFile.delete();
             }
             FileOutputStream out = new FileOutputStream(outputFile);
             bm.compress(Bitmap.CompressFormat.JPEG, quality, out);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return outputFile.getPath();
@@ -186,6 +187,7 @@ public class DensityUtil {
 
     /**
      * 获取照片角度
+     *
      * @param path
      * @return
      */
@@ -215,6 +217,7 @@ public class DensityUtil {
 
     /**
      * 旋转照片
+     *
      * @param bitmap
      * @param degress
      * @return
@@ -229,8 +232,9 @@ public class DensityUtil {
         }
         return bitmap;
     }
+
     private static int calculateInSampleSize(BitmapFactory.Options options,
-                                            int reqWidth, int reqHeight) {
+                                             int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;

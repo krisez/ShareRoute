@@ -2,9 +2,9 @@ package cn.krisez.shareroute.maps;
 
 import android.animation.Animator;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -17,9 +17,14 @@ import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 
 import cn.krisez.shareroute.R;
+import cn.krisez.shareroute.event.MyLocationEvent;
 
 public class MapController /*implements AMapLocationListener, LocationSource*/ {
     private Context mContext;
@@ -27,7 +32,7 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     private MapView mMapView;
     private TextureMapView mTextureMapView;
     private AMap mMap;
-    private MyLocationStyle myLocationStyle;
+    private Marker mMyMarker;
     private MapLocation mapLocation;
     //private IMainView mView;
 
@@ -58,30 +63,52 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     }*/
 
     public MapController defaultAmap() {
-
-        //显示定位按钮是否可以点击
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);//指南针
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(16.5f));
-        //定位按钮显示
-        myLocationStyle = new MyLocationStyle();//初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);//连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
-        myLocationStyle.interval(2000);
-        myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.w));
-        myLocationStyle.strokeColor(Color.WHITE);
-        myLocationStyle.radiusFillColor(Color.argb(100, 20, 12, 20));
-        myLocationStyle.anchor(0.5f, 0.7f);
-        mMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style
-        //显示定位层以及是否定位
-        mMap.setMyLocationEnabled(true);
-
-        //开启定位
         if (mapLocation == null) {
             mapLocation = new MapLocation();
-            mapLocation.startLo(mContext);
+            mapLocation.startLocate(mContext);
         }
 
+        EventBus.getDefault().register(this);
+
+        mMap.getUiSettings().setCompassEnabled(true);//指南针
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(16.5f));
+        mMap.setOnCameraChangeListener(new AMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                isCenter = false;
+            }
+
+            @Override
+            public void onCameraChangeFinish(CameraPosition cameraPosition) {
+
+            }
+        });
         return this;
+    }
+
+    private boolean isCenter = true;
+    private double mLat;
+    private double mLng;
+    private float mBearing;
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMyLocationEvent(MyLocationEvent event) {
+        if (mMyMarker == null) {
+            mMyMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).icon(BitmapDescriptorFactory.fromResource(R.drawable.w))
+                    .position(new LatLng(event.getLat(), event.getLng())).title("自己").setFlat(true).rotateAngle(-event.getBearing()));
+        }
+        mMyMarker.setPosition(new LatLng(mLat = event.getLat(), mLng = event.getLng()));
+        mMyMarker.setRotateAngle(mBearing = -event.getBearing());
+        //开启定位
+        if (isCenter) {
+            mMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(event.getLat(), event.getLng())));
+        }
+    }
+
+    //定位自己的位置
+    public void locateMyPosition() {
+        isCenter = true;
+        mMap.animateCamera(CameraUpdateFactory.changeLatLng(new LatLng(mLat, mLng)));
     }
 
     /**
@@ -101,8 +128,6 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     /**
      * trace 设置处
      */
-
-
     public MapController setTrace(String id) {
         //MapTrace.INSTANCE().init(mMapView, mView);
         clearTrace();
