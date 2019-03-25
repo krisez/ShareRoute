@@ -18,13 +18,14 @@ public class APP extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
-        String url  = AppConfig.HOST  + ":" + AppConfig.PORT ;
+        String url = AppConfig.HOST + ":" + AppConfig.PORT;
         NetWorkUtils.INSTANCE().url(url);
-        ChatModuleManager.connect(SPUtil.getUser().id);
+        if (SPUtil.getUser() != null)
+            ChatModuleManager.connect(SPUtil.getUser().id);
 
     }
 
-    public static Context getContext(){
+    public static Context getContext() {
         return sContext;
     }
 }

@@ -8,10 +8,12 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import cn.krisez.framework.base.BaseActivity;
 import cn.krisez.framework.base.Presenter;
+import cn.krisez.framework.utils.DensityUtil;
 import cn.krisez.framework.widget.DividerDecoration;
 import cn.krisez.imchat.ChatModuleManager;
 import cn.krisez.imchat.R;
@@ -61,10 +63,7 @@ public class ChatsActivity extends BaseActivity implements IChatView {
                 message.from = SharePreferenceUtils.obj(ChatsActivity.this).getUserId();
                 message.to = "1948881";
                 message.type = "0";
-                message.time = "";
-                message.to = "1948881";
-                message.to = "1948881";
-                message.to = "1948881";
+                message.time = DensityUtil.strDate(Calendar.getInstance());
                 MessageManager.send(message.toString());
         });
     }

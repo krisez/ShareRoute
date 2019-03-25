@@ -1,4 +1,4 @@
-package cn.krisez.shareroute.utils;
+package cn.krisez.framework.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
