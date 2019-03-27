@@ -3,8 +3,10 @@ package cn.krisez.imchat.ui;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
+import cn.krisez.imchat.receiver.MessageReceiver;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ public class ChatsActivity extends BaseActivity implements IChatView {
         showBackIconAndClick();
         setRefreshEnable(true);
         ConversationBean c = new ConversationBean();
-        c.headUrl = "http://192.168.137.1/a.png";
+        c.headUrl = "http://192.168.1.101/a.png";
         c.lastContent = "hhhhh";
         c.name = "123";
         c.no = "5";
@@ -63,9 +65,16 @@ public class ChatsActivity extends BaseActivity implements IChatView {
                 message.from = SharePreferenceUtils.obj(ChatsActivity.this).getUserId();
                 message.to = "1948881";
                 message.type = "0";
+                message.content = "eihhhh";
+
                 message.time = DensityUtil.strDate(Calendar.getInstance());
                 MessageManager.send(message.toString());
         });
+        MessageManager.setReceiver(msg ->{
+            //todo 完善处理接发消息
+            toast(msg);
+            Log.d("ChatActivity", "receiver: " + msg);
+        } );
     }
 
     @Override

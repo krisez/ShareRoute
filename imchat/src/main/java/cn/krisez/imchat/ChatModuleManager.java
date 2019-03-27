@@ -18,6 +18,6 @@ public class ChatModuleManager {
         context.startActivity(intent);
     }
     public static void connect(String id) {
-        ImClient.getInstance(id).connect();
+        ImClient.getInstance(id);
     }
 }

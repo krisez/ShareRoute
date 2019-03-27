@@ -8,11 +8,12 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import cn.krisez.imchat.MessageReceiver;
+import cn.krisez.imchat.receiver.MessageReceiver;
 
 public class ImClient extends WebSocketClient {
 
     private static ImClient sImClient = null;
+    private static boolean isConnect = false;
 
     private ImClient(URI serverUri) {
         super(serverUri);
@@ -23,7 +24,7 @@ public class ImClient extends WebSocketClient {
             synchronized (ImClient.class) {
                 if (sImClient == null) {
                     try {
-                        String sUrl = "ws://192.168.137.1:932/";
+                        String sUrl = "ws://192.168.1.101:932/" + id;
                         sImClient = new ImClient(new URI(sUrl));
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
@@ -31,8 +32,9 @@ public class ImClient extends WebSocketClient {
                 }
             }
         }
-        if(!sImClient.isOpen()){
+        if(!isConnect){
             sImClient.connect();
+            isConnect = true;
         }
         return sImClient;
     }
@@ -50,6 +52,7 @@ public class ImClient extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         sImClient = null;
+        isConnect = false;
     }
 
     @Override
@@ -58,7 +61,8 @@ public class ImClient extends WebSocketClient {
     }
 
     private MessageReceiver mReceiver;
-    public void setMsgReceiver(MessageReceiver msgReceiver){
+
+    public void setMsgReceiver(MessageReceiver msgReceiver) {
         this.mReceiver = msgReceiver;
     }
 }

@@ -2,7 +2,7 @@ package cn.krisez.imchat.manager;
 
 import java.nio.ByteBuffer;
 
-import cn.krisez.imchat.MessageReceiver;
+import cn.krisez.imchat.receiver.MessageReceiver;
 import cn.krisez.imchat.client.ImClient;
 
 public class MessageManager {
@@ -21,15 +21,12 @@ public class MessageManager {
         instance().send(buffer);
     }
 
-    public void setReceiver(MessageReceiver receiver) {
-        mReceiver = receiver;
+    public static void setReceiver(MessageReceiver receiver) {
+        instance().setMsgReceiver(receiver);
     }
 
     //外部获取IMClient
     private boolean isFirst = true;
-    public static void connect(String id) {
-        ImClient.getInstance(id).connect();
-    }
 
     public static ImClient instance(){
         return ImClient.getInstance("");
