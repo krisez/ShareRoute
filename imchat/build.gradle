@@ -32,6 +32,8 @@ dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
     api 'com.android.support:appcompat-v7:28.0.0'
     api 'org.java-websocket:Java-WebSocket:1.3.9'
+    implementation 'com.squareup.sqlbrite3:sqlbrite:3.2.0'
+    implementation 'android.arch.persistence:db-framework:1.1.1'
     api project(':framework')
 }
 repositories {

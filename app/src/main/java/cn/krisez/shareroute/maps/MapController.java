@@ -2,10 +2,13 @@ package cn.krisez.shareroute.maps;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 
+import android.util.Log;
+import android.view.MotionEvent;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
@@ -72,15 +75,10 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
 
         mMap.getUiSettings().setCompassEnabled(true);//指南针
         mMap.moveCamera(CameraUpdateFactory.zoomTo(16.5f));
-        mMap.setOnCameraChangeListener(new AMap.OnCameraChangeListener() {
+        mMap.setOnMapTouchListener(new AMap.OnMapTouchListener() {
             @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
+            public void onTouch(MotionEvent motionEvent) {
                 isCenter = false;
-            }
-
-            @Override
-            public void onCameraChangeFinish(CameraPosition cameraPosition) {
-
             }
         });
         return this;
@@ -89,7 +87,7 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     private boolean isCenter = true;
     private double mLat;
     private double mLng;
-    private float mBearing;
+//    private float mBearing;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMyLocationEvent(MyLocationEvent event) {
@@ -98,7 +96,7 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
                     .position(new LatLng(event.getLat(), event.getLng())).title("自己").setFlat(true).rotateAngle(-event.getBearing()));
         }
         mMyMarker.setPosition(new LatLng(mLat = event.getLat(), mLng = event.getLng()));
-        mMyMarker.setRotateAngle(mBearing = -event.getBearing());
+        mMyMarker.setRotateAngle(-event.getBearing());
         //开启定位
         if (isCenter) {
             mMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(event.getLat(), event.getLng())));

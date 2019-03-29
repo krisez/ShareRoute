@@ -3,6 +3,7 @@ package cn.krisez.shareroute.maps;
 import android.content.Context;
 import android.util.Log;
 
+import cn.krisez.framework.utils.DensityUtil;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -62,7 +63,7 @@ public class MapLocation implements AMapLocationListener {
         mBearing = String.valueOf(aMapLocation.getBearing());
         EventBus.getDefault().post(new MyLocationEvent(mLat,mLng,mSpeed,mBearing,aMapLocation.getAddress()));
         if (Const.uploadLocation) {
-            NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUser().id, mLat, mLng, mSpeed, mBearing))
+            NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUser().id, mLat, mLng, mSpeed, mBearing, DensityUtil.getTime()))
                     .handler(new ResultHandler() {
                         @Override
                         public void onSuccess(Result result) {

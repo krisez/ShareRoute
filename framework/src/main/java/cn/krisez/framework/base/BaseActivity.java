@@ -112,8 +112,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeRef
         }
     }
 
-    @Override
-    public void onRefresh() {
+    public void disableRefresh(){
         handle(HandleType.REFRESH,null);
+
     }
 }

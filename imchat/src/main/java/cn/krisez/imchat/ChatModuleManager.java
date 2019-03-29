@@ -1,9 +1,11 @@
 package cn.krisez.imchat;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
 import cn.krisez.imchat.client.ImClient;
+import cn.krisez.imchat.db.DbUtils;
 import cn.krisez.imchat.ui.ChatsActivity;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
 
@@ -19,5 +21,12 @@ public class ChatModuleManager {
     }
     public static void connect(String id) {
         ImClient.getInstance(id);
+    }
+
+    /**
+     * 初始化数据库信息 得到applicationContext
+     */
+    public static void initMsgManager(Application application){
+        DbUtils.init(application);
     }
 }

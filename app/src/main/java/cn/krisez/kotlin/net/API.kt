@@ -12,7 +12,7 @@ interface API {
     fun getOtherPos(@Query("id") id: String): Observable<Result>
 
     @POST("postPos.m")
-    fun postPos(@Query("id") id: String, @Query("lat") lat: String, @Query("lng") lon: String, @Query("speed") speed: String, @Query("direction") direction: String): Observable<Result>
+    fun postPos(@Query("id") id: String, @Query("lat") lat: String, @Query("lng") lon: String, @Query("speed") speed: String, @Query("direction") direction: String,@Query("time")time:String): Observable<Result>
 
     @POST("login.m")
     fun login(@Query("mobile") id: String, @Query("pw") pw: String): Observable<Result>

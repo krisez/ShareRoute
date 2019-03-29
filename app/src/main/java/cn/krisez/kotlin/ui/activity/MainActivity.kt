@@ -91,8 +91,6 @@ class MainActivity : CheckPermissionsActivity() {
         mConstraintLayout = findViewById(R.id.csl_getInfo)
         mAddress = findViewById(R.id.main_user_address)
         val uploadLocation = findViewById<ImageView>(R.id.main_user_upload_location)
-        val userPanel = findViewById<ConstraintLayout>(R.id.main_user_layout)
-        val layoutTool = findViewById<LinearLayout>(R.id.main_user_tool)
         val layoutOperation = findViewById<ImageView>(R.id.main_tool_op)
 
         //得到另外人的信息
@@ -136,14 +134,13 @@ class MainActivity : CheckPermissionsActivity() {
                 //收缩操作
                 isExpand = false
                 layoutOperation.setImageResource(R.drawable.ic_unfold)
-                val y = userPanel.height - layoutTool.height
-                userPanel.animate().y((-y).toFloat()).setInterpolator(AccelerateInterpolator())
-                    .duration = 500
+                val y = main_user_layout.height - main_user_tool.height
+                main_user_layout.animate().y((-y).toFloat()).setInterpolator(AccelerateInterpolator()).duration = 500
             } else {
                 //展开操作
                 isExpand = true
                 layoutOperation.setImageResource(R.drawable.ic_packup)
-                userPanel.animate().y(0f).setInterpolator(BounceInterpolator()).duration = 500
+                main_user_layout.animate().y(0f).setInterpolator(BounceInterpolator()).duration = 500
             }
         }
 
@@ -206,11 +203,18 @@ class MainActivity : CheckPermissionsActivity() {
     override fun onDestroy() {
         super.onDestroy()
         controller!!.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun onLocationEvent(event: MyLocationEvent) {
-        mAddress!!.text = event.addr
+        if(mAddress?.text.toString()!=event.addr){
+            mAddress?.text = event.addr
+            if(!isExpand){
+                val y = main_user_layout.height - main_user_tool.height
+                main_user_layout.animate().y((-y).toFloat()).setInterpolator(AccelerateInterpolator()).duration = 0
+            }
+        }
     }
 
 }
