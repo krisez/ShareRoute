@@ -15,6 +15,21 @@ public class MessageBean {
     public String address;
     public String isRead;
 
+    public MessageBean() {
+    }
+
+    public MessageBean(int index, String from, String to, String type, String content, String time, String fileUrl, String address, String isRead) {
+        this.index = index;
+        this.from = from;
+        this.to = to;
+        this.type = type;
+        this.content = content;
+        this.time = time;
+        this.fileUrl = fileUrl;
+        this.address = address;
+        this.isRead = isRead;
+    }
+
     @NonNull
     @Override
     public String toString() {

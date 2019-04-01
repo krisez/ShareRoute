@@ -18,6 +18,7 @@ import cn.krisez.imchat.R;
 import cn.krisez.imchat.adapter.ChatAdapter;
 import cn.krisez.imchat.bean.ConversationBean;
 import cn.krisez.imchat.bean.MessageBean;
+import cn.krisez.imchat.db.IMMsgRxDbManager;
 import cn.krisez.imchat.manager.MessageManager;
 import cn.krisez.imchat.presneter.ChatPresenter;
 import cn.krisez.imchat.utils.SharePreferenceUtils;

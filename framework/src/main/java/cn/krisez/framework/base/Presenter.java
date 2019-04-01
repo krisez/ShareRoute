@@ -10,7 +10,7 @@ import android.os.Bundle;
 
 public abstract class Presenter {
     private IBaseView mView;
-    private Context mContext;
+    protected Context mContext;
 
     public Presenter(IBaseView view, Context context) {
         mView = view;

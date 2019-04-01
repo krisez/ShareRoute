@@ -7,8 +7,6 @@ import cn.krisez.imchat.client.ImClient;
 
 public class MessageManager {
 
-    private MessageReceiver mReceiver;
-
     public static void send(String text) {
         instance().send(text);
     }
