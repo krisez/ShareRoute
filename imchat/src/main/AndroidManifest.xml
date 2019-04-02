@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.krisez.imchat" >
     <application>
-        <activity android:name=".ui.ChatsActivity"/>
+        <activity android:name=".ui.ConversationsActivity"/>
     </application>
 </manifest>

@@ -1,11 +1,8 @@
 package cn.krisez.imchat.ui;
 
 import cn.krisez.framework.base.IBaseView;
-import cn.krisez.imchat.bean.ConversationBean;
-
-import java.util.List;
+import cn.krisez.imchat.bean.MessageBean;
 
 public interface IChatView extends IBaseView {
-    void showTips(String tips);
-    void chatList(List<ConversationBean> list);
+    void insert(MessageBean messageBean);
 }
