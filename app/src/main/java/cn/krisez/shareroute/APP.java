@@ -21,9 +21,6 @@ public class APP extends Application {
         sContext = getApplicationContext();
         String url = AppConfig.HOST + ":" + AppConfig.PORT;
         NetWorkUtils.INSTANCE().url(url);
-        if (SPUtil.getUser() != null) {
-            ChatModuleManager.connect(SPUtil.getUser().id);
-        }
         ChatModuleManager.initMsgManager(this);
 
     }

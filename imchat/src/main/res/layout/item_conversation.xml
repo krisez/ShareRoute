@@ -1,6 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="80dp"
+    android:padding="@dimen/padding_content_areas">
 
+    <cn.krisez.framework.widget.CircleImageView
+        android:id="@+id/conversation_avatar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/conversation_nick"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_head"
+        app:layout_constraintEnd_toStartOf="@id/conversation_time"
+        app:layout_constraintStart_toEndOf="@id/conversation_avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="123" />
+
+    <TextView
+        android:id="@+id/conversation_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/text_subhead"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="18:25" />
+
+    <TextView
+        android:id="@+id/conversation_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_subhead"
+        app:layout_constraintEnd_toStartOf="@id/conversation_num"
+        app:layout_constraintStart_toEndOf="@id/conversation_avatar"
+        app:layout_constraintTop_toBottomOf="@id/conversation_nick"
+        tools:text="啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊" />
+
+    <RelativeLayout
+        android:id="@+id/conversation_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/conversation_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/conversation_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/tips_conversation_num_bg" />
+
+        <TextView
+            android:id="@+id/conversation_num_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            tools:text="5" />
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

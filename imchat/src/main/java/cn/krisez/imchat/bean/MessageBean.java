@@ -14,11 +14,13 @@ public class MessageBean {
     public String fileUrl;
     public String address;
     public String isRead;
+    public String name;
+    public String headUrl;
 
     public MessageBean() {
     }
 
-    public MessageBean(int index, String from, String to, String type, String content, String time, String fileUrl, String address, String isRead) {
+    public MessageBean(int index, String from, String to, String type, String content, String time, String fileUrl, String address, String isRead, String name, String headUrl) {
         this.index = index;
         this.from = from;
         this.to = to;
@@ -28,6 +30,8 @@ public class MessageBean {
         this.fileUrl = fileUrl;
         this.address = address;
         this.isRead = isRead;
+        this.name = name;
+        this.headUrl = headUrl;
     }
 
     @NonNull

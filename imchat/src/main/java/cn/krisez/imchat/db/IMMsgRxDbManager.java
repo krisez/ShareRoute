@@ -68,7 +68,9 @@ public class IMMsgRxDbManager implements IDBRxManager {
             String fileUrl = cursor.getString(cursor.getColumnIndex("fileUrl"));
             String address = cursor.getString(cursor.getColumnIndex("address"));
             String read = cursor.getString(cursor.getColumnIndex("read"));
-            MessageBean msg = new MessageBean(_id,from,to,type,content,time,fileUrl,address,read);
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String headUrl = cursor.getString(cursor.getColumnIndex("name"));
+            MessageBean msg = new MessageBean(_id,from,to,type,content,time,fileUrl,address,read,name,headUrl);
             list.add(msg);
         }
         return MsgParseUtils.parse(list, mContext);

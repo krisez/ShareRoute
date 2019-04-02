@@ -24,7 +24,7 @@ public class ImClient extends WebSocketClient {
             synchronized (ImClient.class) {
                 if (sImClient == null) {
                     try {
-                        String sUrl = "ws://192.168.1.101:932/" + id;
+                        String sUrl = "ws://192.168.1.104:932/" + id;
                         sImClient = new ImClient(new URI(sUrl));
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
@@ -32,7 +32,7 @@ public class ImClient extends WebSocketClient {
                 }
             }
         }
-        if(!isConnect){
+        if (!isConnect) {
             sImClient.connect();
             isConnect = true;
         }

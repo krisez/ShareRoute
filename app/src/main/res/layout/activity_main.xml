@@ -164,7 +164,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        android:background="@color/colorAccent"
+        android:background="@drawable/selector_locate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/main_user_layout"
         app:srcCompat="@drawable/ic_locate" />

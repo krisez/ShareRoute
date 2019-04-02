@@ -3,6 +3,7 @@ package cn.krisez.kotlin.ui.activity
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.PersistableBundle
 import android.support.constraint.ConstraintLayout
 import android.util.Log
@@ -55,6 +56,10 @@ class MainActivity : CheckPermissionsActivity() {
         setContentView(R.layout.activity_main)
 
         EventBus.getDefault().register(this)
+
+        if (SPUtil.getUser() != null) {
+            ChatModuleManager.connect(SPUtil.getUser().id)
+        }
 
         initView(savedInstanceState)
         initMap(savedInstanceState)
@@ -149,6 +154,8 @@ class MainActivity : CheckPermissionsActivity() {
         }
     }
 
+    private var a = 10
+
     //得到另一个人的info
     private fun getOthersInfo() {
         val s = mEditTextInfo!!.text.toString()
@@ -211,9 +218,13 @@ class MainActivity : CheckPermissionsActivity() {
         if(mAddress?.text.toString()!=event.addr){
             mAddress?.text = event.addr
             if(!isExpand){
-                val y = main_user_layout.height - main_user_tool.height
-                main_user_layout.animate().y((-y).toFloat()).setInterpolator(AccelerateInterpolator()).duration = 0
-            }
+                Handler().postDelayed({
+                    runOnUiThread{
+                        val y = main_user_layout.height - main_user_tool.height
+                        main_user_layout.animate().y((-y).toFloat()).setInterpolator(AccelerateInterpolator()).duration = 0
+                    }
+                },1)
+               }
         }
     }
 
