@@ -211,6 +211,7 @@ class MainActivity : CheckPermissionsActivity() {
         super.onDestroy()
         controller!!.onDestroy()
         EventBus.getDefault().unregister(this)
+        ChatModuleManager.close()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

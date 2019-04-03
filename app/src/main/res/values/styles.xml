@@ -8,15 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="ToolbarTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="actionMenuTextColor">@color/white</item> <!--  敲定颜色-->
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textSize">18sp</item> <!--  搞掂字体大小-->
-        <item name="elevation">0dp</item>
-    </style>
-
     <style name="pop" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/pop_show</item>
         <item name="android:windowExitAnimation">@anim/pop_diss</item>

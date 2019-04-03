@@ -12,6 +12,7 @@ import com.squareup.sqlbrite3.BriteDatabase;
 import com.squareup.sqlbrite3.QueryObservable;
 import com.squareup.sqlbrite3.SqlBrite;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -38,6 +39,7 @@ public class IMMsgRxDbManager implements IDBRxManager {
     //自己发送的消息
     @Override
     public Observable<Boolean> insertMsg(final MessageBean msg) {
+
         return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             ContentValues values = new ContentValues();
             values.put("_id", msg.index);

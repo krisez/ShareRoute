@@ -1,6 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.krisez.imchat" >
-    <application>
-        <activity android:name=".ui.ConversationsActivity"/>
+    package="cn.krisez.imchat">
+
+    <application >
+        <activity android:name=".ui.IMActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ToolbarTheme"
+            />
+        <activity
+            android:name=".ui.ChatActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/ToolbarTheme"
+           />
     </application>
 </manifest>

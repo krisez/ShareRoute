@@ -26,11 +26,14 @@ public class ConversationAdapter extends BaseQuickAdapter<ConversationBean, Base
 
     @Override
     protected void convert(BaseViewHolder helper, ConversationBean item) {
-        Log.d("ConversationAdapter", "convert:" + item.headUrl);
         helper.setText(R.id.conversation_nick, item.name);
         helper.setText(R.id.conversation_time, item.time);
         helper.setText(R.id.conversation_content, item.lastContent);
         helper.setText(R.id.conversation_num_tv, item.no);
+        if(item.no.equals("0")){
+            helper.setVisible(R.id.conversation_num_tv,false);
+            helper.setVisible(R.id.conversation_num,false);
+        }
         CircleImageView civ = helper.getView(R.id.conversation_avatar);
         Glide.with(mContext).setDefaultRequestOptions(new RequestOptions().error(R.drawable.ic_icon).placeholder(R.drawable.ic_icon)).load(item.headUrl).into(civ);
     }

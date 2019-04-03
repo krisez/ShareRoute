@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/im_bottom_conversations"
+        android:icon="@drawable/ic_message"
+        android:title="消息" />
+    <item
+        android:id="@+id/im_bottom_friends"
+        android:icon="@drawable/ic_relation"
+        android:title="伙伴" />
+    <item
+        android:id="@+id/im_bottom_add_friends"
+        android:icon="@drawable/ic_add"
+        android:title="添加" />
+</menu>

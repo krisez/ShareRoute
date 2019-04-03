@@ -204,6 +204,6 @@
         android:onClick="locateOthers"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_account" />
+        app:srcCompat="@drawable/selector_locate" />
 
 </android.support.constraint.ConstraintLayout>

@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import cn.krisez.imchat.client.ImClient;
 import cn.krisez.imchat.db.DbUtils;
-import cn.krisez.imchat.ui.ConversationsActivity;
+import cn.krisez.imchat.ui.IMActivity;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
 
 /**
@@ -15,7 +15,7 @@ import cn.krisez.imchat.utils.SharePreferenceUtils;
 public class ChatModuleManager {
     //外部打开聊天界面
     public static void open(Context context, String id) {
-        Intent intent = new Intent(context, ConversationsActivity.class);
+        Intent intent = new Intent(context, IMActivity.class);
         SharePreferenceUtils.obj(context).saveUser(id);
         context.startActivity(intent);
     }
@@ -29,5 +29,12 @@ public class ChatModuleManager {
      */
     public static void initMsgManager(Application application){
         DbUtils.init(application);
+    }
+
+    /**
+     * 关闭im
+     */
+    public static void close() {
+        ImClient.getInstance("").close();
     }
 }

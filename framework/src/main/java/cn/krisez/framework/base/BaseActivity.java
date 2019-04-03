@@ -32,7 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeRef
         mSwipeRefreshLayout.addView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mSwipeRefreshLayout.setEnabled(false);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.red,R.color.yellow,R.color.blue);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.red,R.color.black,R.color.blue);
 
         mPresenter = presenter();
         if (mPresenter != null) {
