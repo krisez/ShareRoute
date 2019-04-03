@@ -32,6 +32,8 @@
             android:layout_marginStart="@dimen/margin_small"
             android:layout_marginEnd="@dimen/margin_small"
             android:layout_weight="1"
+            android:padding="@dimen/padding_content_areas"
+            android:maxLines="4"
             android:background="@drawable/bg_edit_text" />
 
         <Button
@@ -40,6 +42,7 @@
             android:layout_height="@dimen/height_button"
             android:background="@color/dark_gray"
             android:text="@string/sure"
+            android:layout_gravity="bottom"
             android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>

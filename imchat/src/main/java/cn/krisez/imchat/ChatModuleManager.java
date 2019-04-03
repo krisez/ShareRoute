@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import cn.krisez.imchat.client.ImClient;
 import cn.krisez.imchat.db.DbUtils;
-import cn.krisez.imchat.ui.IMActivity;
+import cn.krisez.imchat.ui.activity.IMActivity;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
 
 /**

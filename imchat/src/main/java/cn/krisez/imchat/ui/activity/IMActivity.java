@@ -1,4 +1,4 @@
-package cn.krisez.imchat.ui;
+package cn.krisez.imchat.ui.activity;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +15,9 @@ import cn.krisez.framework.base.BaseActivity;
 import cn.krisez.framework.base.Presenter;
 import cn.krisez.imchat.R;
 import cn.krisez.imchat.adapter.FmPagerAdapter;
-import cn.krisez.imchat.fragment.ConversationFragment;
+import cn.krisez.imchat.ui.fragment.AddFriendFragment;
+import cn.krisez.imchat.ui.fragment.ConversationFragment;
+import cn.krisez.imchat.ui.fragment.FriendFragment;
 
 public class IMActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
     private BottomNavigationView mBottomNavigationView;
@@ -37,8 +39,8 @@ public class IMActivity extends BaseActivity implements BottomNavigationView.OnN
         setRefreshEnable(false);
         List<Fragment> list = new ArrayList<>();
         list.add(new ConversationFragment());
-        list.add(new ConversationFragment());
-        list.add(new ConversationFragment());
+        list.add(new FriendFragment());
+        list.add(new AddFriendFragment());
         mViewPager = findViewById(R.id.im_viewpager);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -57,6 +59,7 @@ public class IMActivity extends BaseActivity implements BottomNavigationView.OnN
             }
         });
         mViewPager.setAdapter(new FmPagerAdapter(getSupportFragmentManager(),list));
+        mViewPager.setOffscreenPageLimit(3);
         mBottomNavigationView = findViewById(R.id.im_navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(this);
     }

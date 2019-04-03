@@ -1,4 +1,4 @@
-package cn.krisez.imchat.ui;
+package cn.krisez.imchat.ui.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +27,7 @@ import cn.krisez.imchat.bean.MessageBean;
 import cn.krisez.imchat.db.IMMsgRxDbManager;
 import cn.krisez.imchat.manager.MessageManager;
 import cn.krisez.imchat.presneter.ChatPresenter;
+import cn.krisez.imchat.ui.IChatView;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
 
 public class ChatActivity extends BaseActivity implements IChatView {

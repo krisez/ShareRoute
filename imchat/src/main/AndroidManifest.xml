@@ -2,12 +2,13 @@
     package="cn.krisez.imchat">
 
     <application >
-        <activity android:name=".ui.IMActivity"
+        <activity android:name=".ui.activity.IMActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ToolbarTheme"
+            android:windowSoftInputMode="adjustResize"
             />
         <activity
-            android:name=".ui.ChatActivity"
+            android:name=".ui.activity.ChatActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/ToolbarTheme"

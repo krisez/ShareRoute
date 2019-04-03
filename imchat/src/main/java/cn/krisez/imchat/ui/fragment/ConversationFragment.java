@@ -1,4 +1,4 @@
-package cn.krisez.imchat.fragment;
+package cn.krisez.imchat.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +22,7 @@ import cn.krisez.imchat.adapter.ConversationAdapter;
 import cn.krisez.imchat.bean.ConversationBean;
 import cn.krisez.imchat.bean.MessageBean;
 import cn.krisez.imchat.presneter.ConversationPresenter;
-import cn.krisez.imchat.ui.ChatActivity;
+import cn.krisez.imchat.ui.activity.ChatActivity;
 import cn.krisez.imchat.ui.IConversationView;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
 
