@@ -21,13 +21,14 @@ import cn.krisez.imchat.R;
 import cn.krisez.imchat.adapter.ConversationAdapter;
 import cn.krisez.imchat.bean.ConversationBean;
 import cn.krisez.imchat.bean.MessageBean;
-import cn.krisez.imchat.presneter.ConversationPresenter;
+import cn.krisez.imchat.bean.UserBean;
+import cn.krisez.imchat.presneter.IMPresenter;
+import cn.krisez.imchat.ui.IIMView;
 import cn.krisez.imchat.ui.activity.ChatActivity;
-import cn.krisez.imchat.ui.IConversationView;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
 
-public class ConversationFragment extends BaseFragment implements IConversationView {
-    private ConversationPresenter mPresenter;
+public class ConversationFragment extends BaseFragment implements IIMView {
+    private IMPresenter mPresenter;
     private ConversationAdapter mAdapter;
     private List<ConversationBean> mList = new ArrayList<>();
     private Map<String, List<MessageBean>> mMap = new HashMap<>();
@@ -38,7 +39,7 @@ public class ConversationFragment extends BaseFragment implements IConversationV
 
     @Override
     protected Presenter presenter() {
-        return mPresenter = new ConversationPresenter(this, getContext());
+        return mPresenter = new IMPresenter(this, getContext());
     }
 
 
@@ -87,6 +88,11 @@ public class ConversationFragment extends BaseFragment implements IConversationV
         }
         mAdapter.setNewData(mList);
         disableRefresh();
+    }
+
+    @Override
+    public void getFriendsList(List<UserBean> list) {
+
     }
 
     @Override

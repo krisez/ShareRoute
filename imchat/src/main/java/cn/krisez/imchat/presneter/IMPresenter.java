@@ -12,20 +12,21 @@ import java.util.Map;
 import cn.krisez.framework.base.IBaseView;
 import cn.krisez.framework.base.Presenter;
 import cn.krisez.imchat.bean.MessageBean;
+import cn.krisez.imchat.bean.UserBean;
 import cn.krisez.imchat.net.Api;
-import cn.krisez.imchat.ui.IConversationView;
+import cn.krisez.imchat.ui.IIMView;
 import cn.krisez.imchat.utils.MsgParseUtils;
 import cn.krisez.network.NetWorkUtils;
 import cn.krisez.network.bean.Result;
 import cn.krisez.network.handler.ResultHandler;
 
-public class ConversationPresenter extends Presenter {
+public class IMPresenter extends Presenter {
 
-    private IConversationView mChatView;
+    private IIMView mIIMView;
 
-    public ConversationPresenter(IBaseView view, Context context) {
+    public IMPresenter(IBaseView view, Context context) {
         super(view, context);
-        mChatView = (IConversationView) view;
+        mIIMView = (IIMView) view;
     }
 
     @Override
@@ -41,12 +42,12 @@ public class ConversationPresenter extends Presenter {
                         List<MessageBean> list = new Gson().fromJson(result.extra, new TypeToken<List<MessageBean>>() {
                         }.getType());
                         Map<String, List<MessageBean>> map = MsgParseUtils.parse(list, mContext);
-                        mChatView.chatList(map);
+                        mIIMView.chatList(map);
                     }
 
                     @Override
                     public void onFailed(String s) {
-                        mChatView.showTips(s);
+                        mIIMView.showTips(s);
                     }
                 });
     }
@@ -55,13 +56,48 @@ public class ConversationPresenter extends Presenter {
         NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).updateAllRead(from, to)).handler(new ResultHandler() {
             @Override
             public void onSuccess(Result result) {
-                Log.i("ConversationPresenter", "onSuccess: " + result.extra);
+                Log.i("IMPresenter", "onSuccess: " + result.extra);
             }
 
             @Override
             public void onFailed(String s) {
-                Log.e("ConversationPresenter", "onFailed: " + s);
+                Log.e("IMPresenter", "onFailed: " + s);
             }
         });
     }
+
+    /**
+     *
+     * @param id
+     * @param type 0,查找自己的好友；1，查找用户进行好友添加
+     */
+    public void friends(String id,int type){
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).friends(id,type)).handler(new ResultHandler() {
+            @Override
+            public void onSuccess(Result result) {
+                mIIMView.getFriendsList(new Gson().fromJson(result.extra,new TypeToken<List<UserBean>>(){}.getType()));
+            }
+
+            @Override
+            public void onFailed(String s) {
+                mIIMView.showTips(s);
+            }
+        });
+    }
+
+    public void requestAdd(String friendId,String selfId){
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).addFriend(selfId,friendId)).handler(new ResultHandler() {
+            @Override
+            public void onSuccess(Result result) {
+              mIIMView.showTips(result.extra);
+            }
+
+            @Override
+            public void onFailed(String s) {
+                mIIMView.showTips(s);
+            }
+        });
+    }
+
+
 }

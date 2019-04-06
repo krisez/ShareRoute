@@ -10,13 +10,14 @@
         android:padding="@dimen/padding_content_areas">
 
         <EditText
+            android:id="@+id/add_friend_et"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_small"
             android:layout_marginEnd="@dimen/margin_small"
             android:layout_weight="1"
             android:textColor="@color/black"
-            android:background="@drawable/bg_edit_text"
+            android:background="@drawable/bg_edit_search"
             android:hint="输入ID查询"
             android:inputType="number"
             android:imeOptions="actionDone"
@@ -24,9 +25,10 @@
             android:padding="@dimen/padding_content_areas" />
 
         <Button
+            android:id="@+id/add_friend_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
+            android:background="@drawable/selector_sure_btn"
             android:text="@string/sure"
             android:textColor="@color/white" />
     </LinearLayout>

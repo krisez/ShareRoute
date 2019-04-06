@@ -108,7 +108,7 @@ class MainActivity : CheckPermissionsActivity() {
         findViewById<ImageView>(R.id.main_user_help).setOnClickListener {}
         findViewById<ImageView>(R.id.main_user_urgent).setOnClickListener {}
         main_user_message.setOnClickListener {
-            ChatModuleManager.open(this,SPUtil.getUser().id)
+            ChatModuleManager.open(this,SPUtil.getUser().toString())
             main_msg_tips_dot.visibility = View.INVISIBLE
         }
         findViewById<ImageView>(R.id.main_user_history).setOnClickListener {}

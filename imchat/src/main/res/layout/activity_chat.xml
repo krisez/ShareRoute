@@ -34,7 +34,7 @@
             android:layout_weight="1"
             android:padding="@dimen/padding_content_areas"
             android:maxLines="4"
-            android:background="@drawable/bg_edit_text" />
+            android:background="@drawable/bg_edit_msg" />
 
         <Button
             android:id="@+id/chat_send_btn"

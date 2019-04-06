@@ -14,9 +14,9 @@ import cn.krisez.imchat.utils.SharePreferenceUtils;
  */
 public class ChatModuleManager {
     //外部打开聊天界面
-    public static void open(Context context, String id) {
+    public static void open(Context context, String user) {
         Intent intent = new Intent(context, IMActivity.class);
-        SharePreferenceUtils.obj(context).saveUser(id);
+        SharePreferenceUtils.obj(context).saveUser(user);
         context.startActivity(intent);
     }
     public static void connect(String id) {

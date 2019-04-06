@@ -36,12 +36,12 @@ public class ChatPresenter extends Presenter {
         NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).updateAllRead(from, to)).handler(new ResultHandler() {
             @Override
             public void onSuccess(Result result) {
-                Log.i("ConversationPresenter", "onSuccess: " + result.extra);
+                Log.i("IMPresenter", "onSuccess: " + result.extra);
             }
 
             @Override
             public void onFailed(String s) {
-                Log.e("ConversationPresenter", "onFailed: " + s);
+                Log.e("IMPresenter", "onFailed: " + s);
             }
         });
     }
