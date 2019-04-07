@@ -54,17 +54,13 @@ public class ConversationFragment extends BaseFragment implements IIMView {
         mAdapter.setEmptyView(R.layout.view_conversation_empty, (ViewGroup) recyclerView.getParent());
 
         mAdapter.setOnItemClickListener((a, v, p) -> {
-            Intent intent = new Intent(getContext(), ChatActivity.class);
             ConversationBean conversationBean = mList.get(p);
             String key = conversationBean.fromId.equals(SharePreferenceUtils.obj(getContext()).getUserId()) ? conversationBean.toId : conversationBean.fromId;
             String data = new Gson().toJson(mMap.get(key));
-            intent.putExtra("msgs", data);
-            intent.putExtra("friendId",key);
-            intent.putExtra("name",conversationBean.name);
             conversationBean.no = "0";
             a.refreshNotifyItemChanged(p);
             mPresenter.updateAllRead(conversationBean.fromId,conversationBean.toId);
-            startActivity(intent);
+            ChatActivity.chatStart(getContext(),data,key,conversationBean.name);
         });
         onRefresh();
     }

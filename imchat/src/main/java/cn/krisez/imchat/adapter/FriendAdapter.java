@@ -42,7 +42,7 @@ public class FriendAdapter extends BaseQuickAdapter<UserBean, BaseViewHolder> {
                 helper.setBackgroundColor(R.id.request_add_friend_btn, Color.LTGRAY);
                 helper.getView(R.id.request_add_friend_btn).setClickable(false);
             } else {
-                helper.setText(R.id.request_add_friend_btn, R.string.sure);
+                helper.setText(R.id.request_add_friend_btn, R.string.add_friend);
                 helper.setBackgroundColor(R.id.request_add_friend_btn,mContext.getResources().getColor(R.color.colorAccent));
                 helper.addOnClickListener(R.id.request_add_friend_btn);
             }

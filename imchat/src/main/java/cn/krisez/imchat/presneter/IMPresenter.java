@@ -11,9 +11,13 @@ import java.util.Map;
 
 import cn.krisez.framework.base.IBaseView;
 import cn.krisez.framework.base.Presenter;
+import cn.krisez.imchat.bean.AddFriendBean;
 import cn.krisez.imchat.bean.MessageBean;
 import cn.krisez.imchat.bean.UserBean;
+import cn.krisez.imchat.client.WebSocketTransfer;
+import cn.krisez.imchat.manager.MessageManager;
 import cn.krisez.imchat.net.Api;
+import cn.krisez.imchat.receiver.MessageReceiver;
 import cn.krisez.imchat.ui.IIMView;
 import cn.krisez.imchat.utils.MsgParseUtils;
 import cn.krisez.network.NetWorkUtils;
@@ -31,7 +35,13 @@ public class IMPresenter extends Presenter {
 
     @Override
     public void onCreate() {
-
+        MessageManager.setReceiver(s -> {
+            WebSocketTransfer bean = new Gson().fromJson(s, WebSocketTransfer.class);
+            if (bean.type == 66) {
+                AddFriendBean addFriend = new Gson().fromJson(bean.json, AddFriendBean.class);
+                Log.d("IMPresenter", "receiver:" + addFriend.ida + "请求添加好友");
+            }
+        });
     }
 
     public void getChatList(String userId, String time, String msgId) {
@@ -86,17 +96,7 @@ public class IMPresenter extends Presenter {
     }
 
     public void requestAdd(String friendId,String selfId){
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).addFriend(selfId,friendId)).handler(new ResultHandler() {
-            @Override
-            public void onSuccess(Result result) {
-              mIIMView.showTips(result.extra);
-            }
-
-            @Override
-            public void onFailed(String s) {
-                mIIMView.showTips(s);
-            }
-        });
+        MessageManager.send(new WebSocketTransfer(66,new AddFriendBean(selfId,friendId).toString()).toString());
     }
 
 

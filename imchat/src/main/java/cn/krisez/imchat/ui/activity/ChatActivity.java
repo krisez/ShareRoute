@@ -1,12 +1,13 @@
 package cn.krisez.imchat.ui.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +25,7 @@ import cn.krisez.imchat.R;
 import cn.krisez.imchat.adapter.ChatAdapter;
 import cn.krisez.imchat.bean.ChatTypeBean;
 import cn.krisez.imchat.bean.MessageBean;
+import cn.krisez.imchat.client.WebSocketTransfer;
 import cn.krisez.imchat.db.IMMsgRxDbManager;
 import cn.krisez.imchat.manager.MessageManager;
 import cn.krisez.imchat.presneter.ChatPresenter;
@@ -40,6 +42,14 @@ public class ChatActivity extends BaseActivity implements IChatView {
     private RecyclerView mRecyclerView;
     private EditText mEditText;
     private Button mButton;
+
+    public static void chatStart(Context context, String msg, String friendId, String name) {
+        Intent intent = new Intent(context,ChatActivity.class);
+        intent.putExtra("msgs",msg);
+        intent.putExtra("friendId",friendId);
+        intent.putExtra("name",name);
+        context.startActivity(intent);
+    }
 
     @Override
     protected View newView() {
@@ -116,7 +126,7 @@ public class ChatActivity extends BaseActivity implements IChatView {
                 msg.type = "0";
                 msg.content = text;
                 msg.time = DensityUtil.getTime();
-                MessageManager.send(new Gson().toJson(msg));
+                MessageManager.send(new Gson().toJson(new WebSocketTransfer(0,msg.toString())));
                 mEditText.setText("");
                 mButton.setBackgroundColor(getResources().getColor(R.color.dark_gray));
                 addMsg(msg);

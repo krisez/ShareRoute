@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import cn.krisez.framework.base.IBaseView;
 import cn.krisez.framework.base.Presenter;
 import cn.krisez.imchat.bean.MessageBean;
+import cn.krisez.imchat.client.WebSocketTransfer;
 import cn.krisez.imchat.manager.MessageManager;
 import cn.krisez.imchat.net.Api;
 import cn.krisez.imchat.ui.IChatView;
@@ -25,10 +26,13 @@ public class ChatPresenter extends Presenter {
 
     @Override
     public void onCreate() {
-        MessageManager.setReceiver(msg -> {
-            MessageBean bean = new Gson().fromJson(msg, MessageBean.class);
-            mView.insert(bean);
-            updateRead(bean.from, bean.to);
+        MessageManager.setReceiver(s -> {
+            WebSocketTransfer bean = new Gson().fromJson(s, WebSocketTransfer.class);
+            if (bean.type == 0) {
+                MessageBean msg = new Gson().fromJson(bean.json, MessageBean.class);
+                mView.insert(msg);
+                updateRead(msg.from, msg.to);
+            }
         });
     }
 

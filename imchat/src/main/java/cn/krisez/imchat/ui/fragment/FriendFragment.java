@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,7 @@ import cn.krisez.imchat.bean.MessageBean;
 import cn.krisez.imchat.bean.UserBean;
 import cn.krisez.imchat.presneter.IMPresenter;
 import cn.krisez.imchat.ui.IIMView;
+import cn.krisez.imchat.ui.activity.ChatActivity;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
 
 public class FriendFragment extends BaseFragment implements IIMView {
@@ -43,6 +46,11 @@ public class FriendFragment extends BaseFragment implements IIMView {
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(mAdapter);
         mPresenter.friends(SharePreferenceUtils.obj(getContext()).getUserId(),0);
+
+        mAdapter.setOnItemClickListener((adapter, view, position) -> {
+            UserBean userBean = (UserBean) adapter.getData().get(position);
+            ChatActivity.chatStart(getContext(),"",userBean.id,userBean.name);
+        });
     }
 
     @Override
