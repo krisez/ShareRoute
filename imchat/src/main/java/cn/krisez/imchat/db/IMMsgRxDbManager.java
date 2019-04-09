@@ -1,16 +1,13 @@
 package cn.krisez.imchat.db;
 
-import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import cn.krisez.imchat.bean.ConversationBean;
+import android.util.Log;
 import cn.krisez.imchat.bean.MessageBean;
 import cn.krisez.imchat.utils.MsgParseUtils;
 import com.squareup.sqlbrite3.BriteDatabase;
-import com.squareup.sqlbrite3.QueryObservable;
-import com.squareup.sqlbrite3.SqlBrite;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -39,12 +36,18 @@ public class IMMsgRxDbManager implements IDBRxManager {
     //自己发送的消息
     @Override
     public Observable<Boolean> insertMsg(final MessageBean msg) {
+        Log.d("IMMsgRxDbManager", "insertMsg:" + msg.toString());
+        Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(ObservableEmitter<Boolean> emitter) throws Exception {
 
+            }
+        }).subscribe();
         return Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             ContentValues values = new ContentValues();
             values.put("_id", msg.index);
-            values.put("fromId", msg.from);
             values.put("toId", msg.to);
+            values.put("fromId", msg.from);
             values.put("type", msg.type);
             values.put("content", msg.content);
             values.put("time", msg.time);
@@ -52,6 +55,7 @@ public class IMMsgRxDbManager implements IDBRxManager {
             values.put("address", msg.address);
             values.put("read", msg.isRead);
             db.insert(DbConstant.MSG_TABLE, SQLiteDatabase.CONFLICT_REPLACE, values);
+            e.onNext(true);
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 

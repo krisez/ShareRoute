@@ -8,10 +8,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import cn.krisez.network.RequestSubscribe;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -31,6 +33,7 @@ import cn.krisez.imchat.manager.MessageManager;
 import cn.krisez.imchat.presneter.ChatPresenter;
 import cn.krisez.imchat.ui.IChatView;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
+import io.reactivex.functions.Consumer;
 
 public class ChatActivity extends BaseActivity implements IChatView {
     private ChatPresenter mPresenter;
@@ -44,10 +47,13 @@ public class ChatActivity extends BaseActivity implements IChatView {
     private Button mButton;
 
     public static void chatStart(Context context, String msg, String friendId, String name) {
-        Intent intent = new Intent(context,ChatActivity.class);
-        intent.putExtra("msgs",msg);
-        intent.putExtra("friendId",friendId);
-        intent.putExtra("name",name);
+        Intent intent = new Intent(context, ChatActivity.class);
+        if ("".equals(msg)) {
+            msg = new Gson().toJson(new ArrayList<>());
+        }
+        intent.putExtra("msgs", msg);
+        intent.putExtra("friendId", friendId);
+        intent.putExtra("name", name);
         context.startActivity(intent);
     }
 
@@ -96,7 +102,7 @@ public class ChatActivity extends BaseActivity implements IChatView {
     }
 
     private void initListener() {
-        mEditText.setOnClickListener(v-> new Handler().postDelayed(() -> runOnUiThread(() -> mRecyclerView.scrollToPosition(mList.size()-1)),100));
+        mEditText.setOnClickListener(v -> new Handler().postDelayed(() -> runOnUiThread(() -> mRecyclerView.scrollToPosition(mList.size() - 1)), 100));
         mEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -105,7 +111,9 @@ public class ChatActivity extends BaseActivity implements IChatView {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s != "") {
+                Log.d("ChatActivity", "onTextChanged:" + s);
+                String text = s.toString();
+                if (!text.isEmpty()) {
                     mButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                 } else {
                     mButton.setBackgroundColor(getResources().getColor(R.color.dark_gray));
@@ -126,11 +134,10 @@ public class ChatActivity extends BaseActivity implements IChatView {
                 msg.type = "0";
                 msg.content = text;
                 msg.time = DensityUtil.getTime();
-                MessageManager.send(new Gson().toJson(new WebSocketTransfer(0,msg.toString())));
+                MessageManager.send(new Gson().toJson(new WebSocketTransfer(0, msg.toString())));
                 mEditText.setText("");
                 mButton.setBackgroundColor(getResources().getColor(R.color.dark_gray));
-                addMsg(msg);
-                IMMsgRxDbManager.getInstance(this).insertMsg(msg);
+                IMMsgRxDbManager.getInstance(this).insertMsg(msg).subscribe(b -> addMsg(msg));
             }
         });
     }
@@ -142,14 +149,14 @@ public class ChatActivity extends BaseActivity implements IChatView {
 
     @Override
     public void insert(MessageBean messageBean) {
-        addMsg(messageBean);
+        runOnUiThread(() -> {
+            addMsg(messageBean);
+        });
     }
 
     private void addMsg(MessageBean msg) {
-        runOnUiThread(() -> {
-            mList.add(new ChatTypeBean(msg, ChatTypeBean.TYPE_TEXT));
-            mAdapter.notifyItemChanged(mList.size());
-            mRecyclerView.scrollToPosition(mList.size() - 1);
-        });
+        mList.add(new ChatTypeBean(msg, ChatTypeBean.TYPE_TEXT));
+        mAdapter.notifyItemChanged(mList.size());
+        mRecyclerView.scrollToPosition(mList.size() - 1);
     }
 }

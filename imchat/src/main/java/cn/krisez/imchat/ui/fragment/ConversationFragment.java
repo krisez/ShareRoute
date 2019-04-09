@@ -1,18 +1,15 @@
 package cn.krisez.imchat.ui.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import cn.krisez.framework.base.BaseFragment;
 import cn.krisez.framework.base.Presenter;
@@ -76,6 +73,9 @@ public class ConversationFragment extends BaseFragment implements IIMView {
         mList.clear();
         this.mMap = map;
         for (Map.Entry<String, List<MessageBean>> entry : map.entrySet()) {
+            if(mMap.containsKey(entry.getKey())){
+                mMap.get(entry.getKey()).addAll(entry.getValue());
+            }
             MessageBean msg = entry.getValue().get(entry.getValue().size() - 1);
             ConversationBean conversation = new ConversationBean(msg.from, msg.to
                     , msg.headUrl

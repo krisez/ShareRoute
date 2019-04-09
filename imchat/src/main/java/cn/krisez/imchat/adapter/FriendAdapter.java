@@ -35,7 +35,6 @@ public class FriendAdapter extends BaseQuickAdapter<UserBean, BaseViewHolder> {
         helper.setText(R.id.item_friend_nick, item.name);
         CircleImageView circleImageView = helper.getView(R.id.item_friend_avatar);
         Glide.with(helper.itemView).setDefaultRequestOptions(new RequestOptions().error(R.drawable.ic_icon).placeholder(R.drawable.ic_icon)).load(item.avatar).into(circleImageView);
-        Log.d("FriendAdapter", "convert:" + item.request);
         if (add) {
             if (item.request) {
                 helper.setText(R.id.request_add_friend_btn, "已发送");

@@ -36,11 +36,6 @@ class LoginActivity : BaseActivity(), ILoginView {
 
     override fun init(bundle: Bundle?) {
 
-        if (null != SPUtil.getUser()) {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }
-
         findViewById<ImageView>(R.id.iv_login_sign_in).setOnClickListener {
             val animator = ValueAnimator.ofFloat(1f, 0.5f)
             animator.duration = 1000

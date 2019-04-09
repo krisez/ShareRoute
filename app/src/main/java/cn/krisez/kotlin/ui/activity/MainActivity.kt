@@ -30,6 +30,8 @@ import com.amap.api.maps.MapView
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.MarkerOptions
 import com.amap.api.maps.model.MyTrafficStyle
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
@@ -56,10 +58,6 @@ class MainActivity : CheckPermissionsActivity() {
         setContentView(R.layout.activity_main)
 
         EventBus.getDefault().register(this)
-
-        if (SPUtil.getUser() != null) {
-            ChatModuleManager.connect(SPUtil.getUser().id)
-        }
 
         initView(savedInstanceState)
         initMap(savedInstanceState)
@@ -97,21 +95,21 @@ class MainActivity : CheckPermissionsActivity() {
         mAddress = findViewById(R.id.main_user_address)
         val uploadLocation = findViewById<ImageView>(R.id.main_user_upload_location)
         val layoutOperation = findViewById<ImageView>(R.id.main_tool_op)
-
+        Glide.with(this).setDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_icon)).load(SPUtil.getUser().avatar).into(main_user_avatar)
         //得到另外人的信息
         findViewById<Button>(R.id.btn_get_other_info).setOnClickListener { getOthersInfo() }
 
-        findViewById<TextView>(R.id.main_user_id).text = SPUtil.getUser().id
-        findViewById<TextView>(R.id.main_user_nick).text = SPUtil.getUser().name
+        main_user_id.text = SPUtil.getUser().id
+        main_user_nick.text = SPUtil.getUser().name
 
-        findViewById<ImageView>(R.id.main_user_setup).setOnClickListener {}
-        findViewById<ImageView>(R.id.main_user_help).setOnClickListener {}
-        findViewById<ImageView>(R.id.main_user_urgent).setOnClickListener {}
+        main_user_setup.setOnClickListener {}
+        main_user_help.setOnClickListener {}
+        main_user_urgent.setOnClickListener {}
         main_user_message.setOnClickListener {
             ChatModuleManager.open(this,SPUtil.getUser().toString())
             main_msg_tips_dot.visibility = View.INVISIBLE
         }
-        findViewById<ImageView>(R.id.main_user_history).setOnClickListener {}
+        main_user_history.setOnClickListener {}
         uploadLocation.setOnClickListener {
             if (Const.uploadLocation) {
                 Const.uploadLocation = false

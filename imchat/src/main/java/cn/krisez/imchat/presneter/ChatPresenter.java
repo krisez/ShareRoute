@@ -1,6 +1,7 @@
 package cn.krisez.imchat.presneter;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -26,7 +27,7 @@ public class ChatPresenter extends Presenter {
 
     @Override
     public void onCreate() {
-        MessageManager.setReceiver(s -> {
+        MessageManager.addReceiver(0,s -> {
             WebSocketTransfer bean = new Gson().fromJson(s, WebSocketTransfer.class);
             if (bean.type == 0) {
                 MessageBean msg = new Gson().fromJson(bean.json, MessageBean.class);
@@ -36,7 +37,14 @@ public class ChatPresenter extends Presenter {
         });
     }
 
+    @Override
+    public void onDestroy() {
+        MessageManager.removeReceiver(0);
+        super.onDestroy();
+    }
+
     private void updateRead(String from, String to) {
+        Looper.prepare();
         NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).updateAllRead(from, to)).handler(new ResultHandler() {
             @Override
             public void onSuccess(Result result) {
@@ -48,5 +56,6 @@ public class ChatPresenter extends Presenter {
                 Log.e("IMPresenter", "onFailed: " + s);
             }
         });
+        Looper.loop();
     }
 }

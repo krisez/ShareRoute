@@ -19,14 +19,15 @@ public class MessageManager {
         instance().send(buffer);
     }
 
-    public static void setReceiver(MessageReceiver receiver) {
-        instance().setMsgReceiver(receiver);
+    public static void addReceiver(int tag,MessageReceiver receiver) {
+        instance().addMsgReceiver(tag,receiver);
     }
 
-    //外部获取IMClient
-    private boolean isFirst = true;
+    private static ImClient instance(){
+        return ImClient.getInstance();
+    }
 
-    public static ImClient instance(){
-        return ImClient.getInstance("");
+    public static void removeReceiver(int tag) {
+        instance().removeMsgReceiver(tag);
     }
 }

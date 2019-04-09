@@ -24,16 +24,18 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name="cn.krisez.kotlin.ui.activity.LoginActivity"
-            android:windowSoftInputMode="adjustPan">
+        <activity android:name=".WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="cn.krisez.kotlin.ui.activity.LoginActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name="cn.krisez.kotlin.ui.activity.MainActivity"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden"/>
 
         <meta-data

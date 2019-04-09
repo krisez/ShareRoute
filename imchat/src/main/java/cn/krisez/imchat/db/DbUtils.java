@@ -15,19 +15,18 @@ public class DbUtils {
         context = application;
     }
 
-    public static BriteDatabase getInstance(){
+    static BriteDatabase getInstance(){
         if(db == null) {
             synchronized (DbUtils.class) {
                 if (db == null) {
                     SqlBrite sqlBrite = new SqlBrite.Builder().build();
-                    SupportSQLiteOpenHelper.Configuration configuration = SupportSQLiteOpenHelper.Configuration.builder(context.getApplicationContext())
+                    SupportSQLiteOpenHelper.Configuration configuration = SupportSQLiteOpenHelper.Configuration.builder(context)
                             .name(DbConstant.DB_NAME)
                             .callback(new MessageDbHelper())
                             .build();
                     SupportSQLiteOpenHelper.Factory factory = new FrameworkSQLiteOpenHelperFactory();
                     SupportSQLiteOpenHelper helper = factory.create(configuration);
                     db = sqlBrite.wrapDatabaseHelper(helper, Schedulers.io());
-                    return db;
                 }
             }
         }

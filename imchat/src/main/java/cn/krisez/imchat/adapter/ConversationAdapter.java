@@ -33,6 +33,9 @@ public class ConversationAdapter extends BaseQuickAdapter<ConversationBean, Base
         if(item.no.equals("0")){
             helper.setVisible(R.id.conversation_num_tv,false);
             helper.setVisible(R.id.conversation_num,false);
+        }else{
+            helper.setVisible(R.id.conversation_num_tv,true);
+            helper.setVisible(R.id.conversation_num,true);
         }
         CircleImageView civ = helper.getView(R.id.conversation_avatar);
         Glide.with(mContext).setDefaultRequestOptions(new RequestOptions().error(R.drawable.ic_icon).placeholder(R.drawable.ic_icon)).load(item.headUrl).into(civ);
