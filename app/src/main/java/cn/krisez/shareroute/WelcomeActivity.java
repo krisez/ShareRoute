@@ -9,8 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import cn.krisez.imchat.client.ImConst;
-import cn.krisez.imchat.services.AddFriendServices;
 import cn.krisez.kotlin.ui.activity.LoginActivity;
 import cn.krisez.kotlin.ui.activity.MainActivity;
 import cn.krisez.shareroute.utils.SPUtil;
@@ -29,8 +27,6 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (null != SPUtil.getUser()) {
-                    ImConst.id = SPUtil.getUser().id;
-                    startService(new Intent(WelcomeActivity.this, AddFriendServices.class).putExtra("cls",MainActivity.class));
                     startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
                     finish();
                 }else{

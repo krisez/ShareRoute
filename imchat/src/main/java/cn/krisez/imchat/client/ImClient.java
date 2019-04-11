@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import cn.krisez.imchat.receiver.MessageReceiver;
 
@@ -18,7 +19,7 @@ public class ImClient extends WebSocketClient {
 
     private static ImClient sImClient = null;
     private static boolean isConnect = false;
-    private Map<Integer,MessageReceiver> map = new HashMap<>();
+    private Map<Integer, MessageReceiver> map = new HashMap<>();
 
     private ImClient(URI serverUri) {
         super(serverUri);
@@ -50,11 +51,20 @@ public class ImClient extends WebSocketClient {
         Log.d("ImClient", "onOpen:连接成功" + handshakedata.getHttpStatusMessage());
     }
 
+    /**
+     * type=0 消息
+     * type=66 好友添加
+     * @param message 服务端返回的message
+     */
     @Override
     public void onMessage(String message) {
         Log.d("ImClient", "onMessage:" + message);
         WebSocketTransfer bean = new Gson().fromJson(message, WebSocketTransfer.class);
-        map.get(bean.type).receiver(bean.json);
+        if (bean.type == 0) {
+            Objects.requireNonNull(map.get(0)).receiver(bean.json);
+        } else {
+            Objects.requireNonNull(map.get(bean.type)).receiver(bean.json);
+        }
     }
 
     @Override
@@ -68,11 +78,16 @@ public class ImClient extends WebSocketClient {
         ex.printStackTrace();
     }
 
-    public void addMsgReceiver(int tag,MessageReceiver msgReceiver) {
-        map.put(tag,msgReceiver);
+    /**
+     *
+     * @param tag 0 消息；-1服务；66好友服务监听
+     * @param msgReceiver
+     */
+    public void addMsgReceiver(int tag, MessageReceiver msgReceiver) {
+        map.put(tag, msgReceiver);
     }
 
-    public void removeMsgReceiver(int tag){
+    public void removeMsgReceiver(int tag) {
         map.remove(tag);
     }
 }

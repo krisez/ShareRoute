@@ -45,16 +45,17 @@ public class FriendFragment extends BaseFragment implements IIMView {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(mAdapter);
-        mPresenter.friends(SharePreferenceUtils.obj(getContext()).getUserId(),0);
 
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
             UserBean userBean = (UserBean) adapter.getData().get(position);
             ChatActivity.chatStart(getContext(),"",userBean.id,userBean.name);
         });
+        onRefresh();
     }
 
     @Override
     public void onRefresh() {
+        super.onRefresh();
         mPresenter.friends(SharePreferenceUtils.obj(getContext()).getUserId(),0);
     }
 

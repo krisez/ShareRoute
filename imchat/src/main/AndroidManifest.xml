@@ -13,6 +13,6 @@
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/ToolbarTheme"
            />
-        <service android:name=".services.AddFriendServices"/>
+        <service android:name=".services.IMMsgService" android:priority="1000"/>
     </application>
 </manifest>

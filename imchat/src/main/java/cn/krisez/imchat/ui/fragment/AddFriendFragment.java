@@ -81,11 +81,6 @@ public class AddFriendFragment extends BaseFragment implements IIMView {
     }
 
     @Override
-    public void onRefresh() {
-
-    }
-
-    @Override
     public void chatList(Map<String, List<MessageBean>> map) {
 
     }

@@ -29,6 +29,7 @@ public class ConversationFragment extends BaseFragment implements IIMView {
     private ConversationAdapter mAdapter;
     private List<ConversationBean> mList = new ArrayList<>();
     private Map<String, List<MessageBean>> mMap = new HashMap<>();
+
     @Override
     protected View newView() {
         return View.inflate(getContext(), R.layout.fragment_conversation, null);
@@ -41,7 +42,7 @@ public class ConversationFragment extends BaseFragment implements IIMView {
 
 
     @Override
-    protected void init(View view,Bundle bundle) {
+    protected void init(View view, Bundle bundle) {
         setRefreshEnable(true);
         mAdapter = new ConversationAdapter(getContext(), R.layout.item_conversation, mList);
         RecyclerView recyclerView = view.findViewById(R.id.conversation_recycler);
@@ -54,12 +55,13 @@ public class ConversationFragment extends BaseFragment implements IIMView {
             ConversationBean conversationBean = mList.get(p);
             String key = conversationBean.fromId.equals(SharePreferenceUtils.obj(getContext()).getUserId()) ? conversationBean.toId : conversationBean.fromId;
             String data = new Gson().toJson(mMap.get(key));
+            if (!"0".equals(conversationBean.no)) {
+                mPresenter.updateAllRead(conversationBean.fromId, conversationBean.toId);
+            }
             conversationBean.no = "0";
             a.refreshNotifyItemChanged(p);
-            mPresenter.updateAllRead(conversationBean.fromId,conversationBean.toId);
-            ChatActivity.chatStart(getContext(),data,key,conversationBean.name);
+            ChatActivity.chatStart(getContext(), data, key, conversationBean.name);
         });
-        onRefresh();
     }
 
     @Override
@@ -73,13 +75,23 @@ public class ConversationFragment extends BaseFragment implements IIMView {
         mList.clear();
         this.mMap = map;
         for (Map.Entry<String, List<MessageBean>> entry : map.entrySet()) {
-            if(mMap.containsKey(entry.getKey())){
-                mMap.get(entry.getKey()).addAll(entry.getValue());
+            int count = 0;
+            ConversationBean conversation = new ConversationBean();
+            for (MessageBean bean : entry.getValue()) {
+                if (bean.to.equals(SharePreferenceUtils.obj(getContext()).getUserId())) {
+                    if (null == bean.isRead || bean.isRead.equals("0")) {
+                        count++;
+                    }
+                    conversation.headUrl = bean.headUrl;
+                    conversation.fromId = bean.from;
+                    conversation.toId = bean.to;
+                    conversation.name = bean.name;
+                }
             }
             MessageBean msg = entry.getValue().get(entry.getValue().size() - 1);
-            ConversationBean conversation = new ConversationBean(msg.from, msg.to
-                    , msg.headUrl
-                    , msg.name, msg.content, msg.time, entry.getValue().size() + "");
+            conversation.lastContent = msg.content;
+            conversation.time = msg.time;
+            conversation.no = String.valueOf(count);
             mList.add(conversation);
         }
         mAdapter.setNewData(mList);
@@ -93,6 +105,13 @@ public class ConversationFragment extends BaseFragment implements IIMView {
 
     @Override
     public void onRefresh() {
-        mPresenter.getChatList(SharePreferenceUtils.obj(getActivity()).getUserId(), "2019-01-01 00:00:00", "0");
+        super.onRefresh();
+        mPresenter.getChatList(SharePreferenceUtils.obj(getActivity()).getUserId());
+    }
+
+    @Override
+    public void onResume() {
+        onRefresh();
+        super.onResume();
     }
 }

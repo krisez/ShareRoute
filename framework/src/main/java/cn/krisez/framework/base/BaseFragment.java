@@ -46,7 +46,7 @@ public abstract class BaseFragment extends Fragment implements IBaseView, SwipeR
     }
 
     public void toast(String s) {
-        Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), s+"", Toast.LENGTH_SHORT).show();
     }
 
     protected abstract View newView();
@@ -86,5 +86,10 @@ public abstract class BaseFragment extends Fragment implements IBaseView, SwipeR
 
     public void disableRefresh(){
         handle(HandleType.REFRESH,null);
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
     }
 }

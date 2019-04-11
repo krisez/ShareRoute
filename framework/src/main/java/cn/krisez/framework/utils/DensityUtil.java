@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,6 +70,31 @@ public class DensityUtil {
     public static String getTime() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",new Locale("zh","CN"));
         return format.format(new Date());
+    }
+
+    /**
+     * 两个日期比较
+     * @param date1 日期
+     * @param date2 日期
+     * @return -1 date1大;0 相等;1 date2 大
+     */
+    public static int compareTime(String date1,String date2){
+        SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",new Locale("zh","CN"));
+        try {
+            Date d1 = dateFormat.parse(date1);
+            Date d2 = dateFormat.parse(date2);
+            if(d1.equals(d2)){
+                return 0;
+            }else if(d1.before(d2)){
+                return 1;
+            }else if(d1.after(d2)){
+                return -1;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -404;
+        }
+        return 200;
     }
 
     /**
@@ -236,8 +263,7 @@ public class DensityUtil {
         return bitmap;
     }
 
-    private static int calculateInSampleSize(BitmapFactory.Options options,
-                                             int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;

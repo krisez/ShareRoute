@@ -36,7 +36,7 @@
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name="cn.krisez.kotlin.ui.activity.MainActivity"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

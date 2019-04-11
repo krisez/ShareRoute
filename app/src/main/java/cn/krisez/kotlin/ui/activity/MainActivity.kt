@@ -1,5 +1,6 @@
 package cn.krisez.kotlin.ui.activity
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +14,9 @@ import android.view.animation.BounceInterpolator
 import android.widget.*
 import cn.krisez.framework.base.CheckPermissionsActivity
 import cn.krisez.imchat.ChatModuleManager
+import cn.krisez.imchat.client.ImConst
+import cn.krisez.imchat.manager.MessageManager
+import cn.krisez.imchat.services.IMMsgService
 import cn.krisez.kotlin.net.API
 import cn.krisez.network.NetWorkUtils
 import cn.krisez.network.bean.Result
@@ -58,7 +62,8 @@ class MainActivity : CheckPermissionsActivity() {
         setContentView(R.layout.activity_main)
 
         EventBus.getDefault().register(this)
-
+        ImConst.id = SPUtil.getUser().id
+        startService(Intent(this, IMMsgService::class.java).putExtra("user",SPUtil.getUser().toString()).putExtra("cls", MainActivity::class.java))
         initView(savedInstanceState)
         initMap(savedInstanceState)
     }
@@ -84,6 +89,9 @@ class MainActivity : CheckPermissionsActivity() {
         mAMap?.setOnMarkerClickListener {
             Toast.makeText(this@MainActivity, it.title, Toast.LENGTH_SHORT).show()
             true
+        }
+        MessageManager.addReceiver(0){
+            Log.d("MainActivity","initMap:$it")
         }
     }
 
@@ -129,9 +137,6 @@ class MainActivity : CheckPermissionsActivity() {
                 }
             }
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            uploadLocation.drawable.setTint(resources.getColor(R.color.vector_reset))
-        }
         layoutOperation.setOnClickListener {
             if (isExpand) {
                 //收缩操作
@@ -170,7 +175,6 @@ class MainActivity : CheckPermissionsActivity() {
             .handler(object : ResultHandler {
                 override fun onSuccess(result: Result?) {
                     val s = result?.extra
-                    Log.d("MainActivity", "onSuccess:$s")
                     val point = Gson().fromJson(s, TrackPoint::class.java)
                     val lat = point.lat.toDouble()
                     val lng = point.lng.toDouble()

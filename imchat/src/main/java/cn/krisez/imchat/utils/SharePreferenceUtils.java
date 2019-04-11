@@ -36,4 +36,16 @@ public class SharePreferenceUtils {
         UserBean userBean = new Gson().fromJson(sharedPreferences.getString("user",""),UserBean.class);
         return userBean.mobile;
     }
+
+    public String getNickName(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("im",Context.MODE_PRIVATE);
+        UserBean userBean = new Gson().fromJson(sharedPreferences.getString("user",""),UserBean.class);
+        return userBean.name;
+    }
+
+    public String getHearUrl(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("im",Context.MODE_PRIVATE);
+        UserBean userBean = new Gson().fromJson(sharedPreferences.getString("user",""),UserBean.class);
+        return userBean.avatar;
+    }
 }

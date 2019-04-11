@@ -24,4 +24,17 @@ public class ConversationBean {
         this.time = time;
         this.no = no;
     }
+
+    @Override
+    public String toString() {
+        return "ConversationBean{" +
+                "fromId='" + fromId + '\'' +
+                ", toId='" + toId + '\'' +
+                ", headUrl='" + headUrl + '\'' +
+                ", name='" + name + '\'' +
+                ", lastContent='" + lastContent + '\'' +
+                ", time='" + time + '\'' +
+                ", no='" + no + '\'' +
+                '}';
+    }
 }

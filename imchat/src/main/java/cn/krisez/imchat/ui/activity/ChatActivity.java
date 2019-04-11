@@ -4,16 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import cn.krisez.network.RequestSubscribe;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -33,7 +34,6 @@ import cn.krisez.imchat.manager.MessageManager;
 import cn.krisez.imchat.presneter.ChatPresenter;
 import cn.krisez.imchat.ui.IChatView;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
-import io.reactivex.functions.Consumer;
 
 public class ChatActivity extends BaseActivity implements IChatView {
     private ChatPresenter mPresenter;
@@ -85,14 +85,15 @@ public class ChatActivity extends BaseActivity implements IChatView {
         mButton = findViewById(R.id.chat_send_btn);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 //        manager.setStackFromEnd(true);
+        manager.scrollToPosition(mList.size()-1);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mAdapter);
-
     }
 
     private void initData() {
         friendName = getIntent().getStringExtra("name");
         friendId = getIntent().getStringExtra("friendId");
+        mPresenter.bindServices(friendId);
         String data = getIntent().getStringExtra("msgs");
         List<MessageBean> list = new Gson().fromJson(data, new TypeToken<List<MessageBean>>() {
         }.getType());
@@ -134,10 +135,21 @@ public class ChatActivity extends BaseActivity implements IChatView {
                 msg.type = "0";
                 msg.content = text;
                 msg.time = DensityUtil.getTime();
+                msg.name = SharePreferenceUtils.obj(this).getNickName();
+                msg.headUrl = SharePreferenceUtils.obj(this).getHearUrl();
                 MessageManager.send(new Gson().toJson(new WebSocketTransfer(0, msg.toString())));
                 mEditText.setText("");
                 mButton.setBackgroundColor(getResources().getColor(R.color.dark_gray));
                 IMMsgRxDbManager.getInstance(this).insertMsg(msg).subscribe(b -> addMsg(msg));
+            }
+        });
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if(dy<0){
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(recyclerView.getWindowToken(),0);
+                }
             }
         });
     }
@@ -149,9 +161,7 @@ public class ChatActivity extends BaseActivity implements IChatView {
 
     @Override
     public void insert(MessageBean messageBean) {
-        runOnUiThread(() -> {
-            addMsg(messageBean);
-        });
+        addMsg(messageBean);
     }
 
     private void addMsg(MessageBean msg) {
