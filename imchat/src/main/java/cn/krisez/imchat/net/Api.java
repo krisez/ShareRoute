@@ -13,7 +13,7 @@ public interface Api {
     Observable<Result> updateAllRead(@Query("from")String from,@Query("to")String to);
     @POST("friendsList.m")
     Observable<Result> friends(@Query("id")String id,@Query("type")int type);
-    @POST("addFriend.m")
-    Observable<Result> addFriend(@Query("idA")String id1,@Query("idB")String id2);
+    @POST("dealFriendRequest.m")
+    Observable<Result> dealFriendRequest(@Query("idA")String id1,@Query("idB")String id2,@Query("deal")int deal);
 
 }

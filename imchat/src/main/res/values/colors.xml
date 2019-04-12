@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="navigation_uncheck">#A2A2A2</color>
+    <color name="refuse_red">#D16161</color>
 </resources>

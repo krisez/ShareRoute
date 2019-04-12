@@ -10,5 +10,5 @@ import java.util.Map;
 public interface IIMView extends IBaseView {
     void showTips(String tips);
     void chatList(Map<String, List<MessageBean>> map);
-    void getFriendsList(List<UserBean> list);//加载好友列表以及查找用户
+    void getFriendsList(List<UserBean> list,int type);//加载好友列表以及查找用户
 }

@@ -18,15 +18,8 @@ import cn.krisez.imchat.bean.UserBean;
 
 public class FriendAdapter extends BaseQuickAdapter<UserBean, BaseViewHolder> {
 
-    private boolean add = false;
-    private Context mContext;
-
-    public FriendAdapter(Context context, int layoutResId, @Nullable List<UserBean> data) {
+    public FriendAdapter(int layoutResId, @Nullable List<UserBean> data) {
         super(layoutResId, data);
-        if (layoutResId == R.layout.item_add_friend) {
-            add = true;
-        }
-        this.mContext = context;
     }
 
     @Override
@@ -35,16 +28,5 @@ public class FriendAdapter extends BaseQuickAdapter<UserBean, BaseViewHolder> {
         helper.setText(R.id.item_friend_nick, item.name);
         CircleImageView circleImageView = helper.getView(R.id.item_friend_avatar);
         Glide.with(helper.itemView).setDefaultRequestOptions(new RequestOptions().error(R.drawable.ic_icon).placeholder(R.drawable.ic_icon)).load(item.avatar).into(circleImageView);
-        if (add) {
-            if (item.request) {
-                helper.setText(R.id.request_add_friend_btn, "已发送");
-                helper.setBackgroundColor(R.id.request_add_friend_btn, Color.LTGRAY);
-                helper.getView(R.id.request_add_friend_btn).setClickable(false);
-            } else {
-                helper.setText(R.id.request_add_friend_btn, R.string.add_friend);
-                helper.setBackgroundColor(R.id.request_add_friend_btn,mContext.getResources().getColor(R.color.colorAccent));
-                helper.addOnClickListener(R.id.request_add_friend_btn);
-            }
-        }
     }
 }

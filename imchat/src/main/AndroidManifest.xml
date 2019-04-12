@@ -5,7 +5,7 @@
         <activity android:name=".ui.activity.IMActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ToolbarTheme"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             />
         <activity
             android:name=".ui.activity.ChatActivity"

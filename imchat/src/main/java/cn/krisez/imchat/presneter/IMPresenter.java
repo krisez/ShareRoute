@@ -46,7 +46,12 @@ public class IMPresenter extends Presenter {
                             public void onSuccess(Result result) {
                                 List<MessageBean> list = new Gson().fromJson(result.extra, new TypeToken<List<MessageBean>>() {
                                 }.getType());
-                                mIIMView.chatList(MsgParseUtils.mergeMap(queryMsgBean.map, list, mContext));
+                                if(!list.isEmpty()){
+                                    mIIMView.chatList(MsgParseUtils.mergeMap(queryMsgBean.map, list, mContext));
+                                    IMMsgRxDbManager.getInstance(mContext).insertMsg(list);
+                                }else{
+                                    mIIMView.chatList(queryMsgBean.map);
+                                }
                             }
 
                             @Override
@@ -70,24 +75,39 @@ public class IMPresenter extends Presenter {
                     public void onFailed(String s) {
                         Log.e("IMPresenter", "onFailed: " + s);
                     }
-                }), new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                throwable.printStackTrace();
-            }
-        });
+                }));
     }
 
     /**
      * @param id
-     * @param type 0,查找自己的好友；1，查找用户进行好友添加
+     * @param type 0,查找自己的好友；1，查找用户进行好友添加；2，查询好友请求
      */
     public void friends(String id, int type) {
         NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).friends(id, type)).handler(new ResultHandler() {
             @Override
             public void onSuccess(Result result) {
                 mIIMView.getFriendsList(new Gson().fromJson(result.extra, new TypeToken<List<UserBean>>() {
-                }.getType()));
+                }.getType()),type);
+            }
+
+            @Override
+            public void onFailed(String s) {
+                mIIMView.showTips(s);
+            }
+        });
+    }
+
+    /**
+     * @param ida 申请人（请求添加好友的人）
+     * @param idb 处理人（用户）
+     * @param deal 1,同意；-3不同意
+     */
+    public void dealRequest(String ida,String idb,int deal){
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).dealFriendRequest(ida,idb,deal)).handler(new ResultHandler() {
+            @Override
+            public void onSuccess(Result result) {
+                Log.d("IMPresenter", "onSuccess:" + result.extra);
+                mIIMView.showTips(result.extra);
             }
 
             @Override

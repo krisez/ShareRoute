@@ -60,6 +60,31 @@ public class IMMsgRxDbManager {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
+    public void insertMsg(List<MessageBean> list) {
+        BriteDatabase.Transaction transaction = db.newTransaction();
+        Log.d("IMMsgRxDbManager", "insertMsg:" + list.size());
+        try {
+            for (int i = 0; i < list.size(); i++) {
+                ContentValues values = new ContentValues();
+                values.put("_id", list.get(i).index);
+                values.put("toId", list.get(i).to);
+                values.put("fromId", list.get(i).from);
+                values.put("type", list.get(i).type);
+                values.put("content", list.get(i).content);
+                values.put("time", list.get(i).time);
+                values.put("fileUrl", list.get(i).fileUrl);
+                values.put("address", list.get(i).address);
+                values.put("read", list.get(i).isRead);
+                values.put("name", list.get(i).name);
+                values.put("avatar", list.get(i).headUrl);
+                db.insert(DbConstant.MSG_TABLE, SQLiteDatabase.CONFLICT_REPLACE, values);
+            }
+            transaction.markSuccessful();
+        } finally {
+            transaction.end();
+        }
+    }
+
     //查询语句
     public Observable<QueryMsgBean> queryMsg() {
         return Observable.create(emitter -> {
@@ -81,7 +106,7 @@ public class IMMsgRxDbManager {
                 list.add(msg);
             }
             QueryMsgBean queryMsgBean = new QueryMsgBean();
-            if(list.size()!=0){
+            if (list.size() != 0) {
                 for (int i = 1; i < list.size(); i++) {
                     int index = list.get(list.size() - i).index;
                     if (index != 0) {//只有自己发的才是0

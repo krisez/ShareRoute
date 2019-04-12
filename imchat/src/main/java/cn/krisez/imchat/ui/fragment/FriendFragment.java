@@ -40,7 +40,7 @@ public class FriendFragment extends BaseFragment implements IIMView {
     @Override
     protected void init(View v, Bundle bundle) {
         setRefreshEnable(true);
-        mAdapter = new FriendAdapter(getContext(),R.layout.item_friend,new ArrayList<>());
+        mAdapter = new FriendAdapter(R.layout.item_friend,new ArrayList<>());
         RecyclerView recyclerView = v.findViewById(R.id.friends_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
@@ -66,7 +66,7 @@ public class FriendFragment extends BaseFragment implements IIMView {
     }
 
     @Override
-    public void getFriendsList(List<UserBean> list) {
+    public void getFriendsList(List<UserBean> list,int type) {
         mAdapter.setNewData(list);
         disableRefresh();
     }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_content_areas">
+
+    <cn.krisez.framework.widget.CircleImageView
+        android:id="@+id/item_friend_avatar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_friend_nick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_head"
+        app:layout_constraintStart_toEndOf="@id/item_friend_avatar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_friend_uid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_subhead"
+        app:layout_constraintStart_toEndOf="@id/item_friend_avatar"
+        app:layout_constraintTop_toBottomOf="@id/item_friend_nick" />
+
+    <Button
+        android:id="@+id/friend_request_refuse_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_button"
+        android:background="@color/refuse_red"
+        android:text="@string/refuse"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/friend_request_agree_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_button"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:background="@color/colorAccent"
+        android:text="@string/agree"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/friend_request_refuse_btn"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/friend_request_deal_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_button"
+        android:background="@color/light_gray"
+        android:clickable="false"
+        android:focusable="false"
+        android:text="已处理"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_button"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>

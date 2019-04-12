@@ -99,7 +99,7 @@ public class ConversationFragment extends BaseFragment implements IIMView {
     }
 
     @Override
-    public void getFriendsList(List<UserBean> list) {
+    public void getFriendsList(List<UserBean> list,int type) {
 
     }
 
