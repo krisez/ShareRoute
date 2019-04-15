@@ -69,7 +69,7 @@ public class LoginPresenter extends Presenter {
     }
 
     public void updatePw(String pw) {
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).updatePw(SPUtil.getUser().id, pw))
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).updatePw(SPUtil.getUser().id,MD5Utils.encode(pw)))
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {

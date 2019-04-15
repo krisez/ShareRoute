@@ -1,18 +1,23 @@
 package cn.krisez.kotlin.ui.activity
 
+import android.content.ContentUris
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.PersistableBundle
+import android.net.Uri
+import android.os.*
+import android.provider.DocumentsContract
+import android.provider.MediaStore
+import android.support.annotation.RequiresApi
 import android.support.constraint.ConstraintLayout
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.BounceInterpolator
 import android.widget.*
 import cn.krisez.framework.base.CheckPermissionsActivity
+import cn.krisez.framework.utils.DensityUtil
 import cn.krisez.imchat.ChatModuleManager
 import cn.krisez.imchat.client.ImConst
 import cn.krisez.imchat.manager.MessageManager
@@ -38,9 +43,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
+import java.lang.Exception
+import java.net.URISyntaxException
 
 class MainActivity : CheckPermissionsActivity() {
 
@@ -63,7 +74,12 @@ class MainActivity : CheckPermissionsActivity() {
 
         EventBus.getDefault().register(this)
         ImConst.id = SPUtil.getUser().id
-        startService(Intent(this, IMMsgService::class.java).putExtra("user",SPUtil.getUser().toString()).putExtra("cls", MainActivity::class.java))
+        startService(
+            Intent(this, IMMsgService::class.java).putExtra(
+                "user",
+                SPUtil.getUser().toString()
+            ).putExtra("cls", MainActivity::class.java)
+        )
         initView(savedInstanceState)
         initMap(savedInstanceState)
     }
@@ -90,8 +106,8 @@ class MainActivity : CheckPermissionsActivity() {
             Toast.makeText(this@MainActivity, it.title, Toast.LENGTH_SHORT).show()
             true
         }
-        MessageManager.addReceiver(0){
-            Log.d("MainActivity","initMap:$it")
+        MessageManager.addReceiver(0) {
+            Log.d("MainActivity", "initMap:$it")
         }
     }
 
@@ -103,21 +119,22 @@ class MainActivity : CheckPermissionsActivity() {
         mAddress = findViewById(R.id.main_user_address)
         val uploadLocation = findViewById<ImageView>(R.id.main_user_upload_location)
         val layoutOperation = findViewById<ImageView>(R.id.main_tool_op)
-        Glide.with(this).setDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_icon)).load(SPUtil.getUser().avatar).into(main_user_avatar)
         //得到另外人的信息
         findViewById<Button>(R.id.btn_get_other_info).setOnClickListener { getOthersInfo() }
 
         main_user_id.text = SPUtil.getUser().id
-        main_user_nick.text = SPUtil.getUser().name
-
+        main_user_avatar.setOnClickListener {
+            startActivity(Intent(this,PersonalActivity::class.java))
+        }
         main_user_setup.setOnClickListener {}
         main_user_help.setOnClickListener {}
         main_user_urgent.setOnClickListener {}
         main_user_message.setOnClickListener {
-            ChatModuleManager.open(this,SPUtil.getUser().toString())
+            ChatModuleManager.open(this, SPUtil.getUser().toString())
             main_msg_tips_dot.visibility = View.INVISIBLE
         }
         main_user_history.setOnClickListener {}
+        main_user_mail.setOnClickListener{}
         uploadLocation.setOnClickListener {
             if (Const.uploadLocation) {
                 Const.uploadLocation = false
@@ -143,17 +160,23 @@ class MainActivity : CheckPermissionsActivity() {
                 isExpand = false
                 layoutOperation.setImageResource(R.drawable.ic_unfold)
                 val y = main_user_layout.height - main_user_tool.height
-                main_user_layout.animate().y((-y).toFloat()).setInterpolator(AccelerateInterpolator()).duration = 500
+                main_user_layout.animate().y((-y).toFloat())
+                    .setInterpolator(AccelerateInterpolator()).duration = 500
             } else {
                 //展开操作
                 isExpand = true
                 layoutOperation.setImageResource(R.drawable.ic_packup)
-                main_user_layout.animate().y(0f).setInterpolator(BounceInterpolator()).duration = 500
+                main_user_layout.animate().y(0f).setInterpolator(BounceInterpolator()).duration =
+                    500
             }
         }
 
         move_my_locate.setOnClickListener {
             controller?.locateMyPosition()
+        }
+
+        main_user_layout.setOnClickListener {
+            Log.d("MainActivity","initView:只为了拦截点击事件")
         }
     }
 
@@ -202,6 +225,9 @@ class MainActivity : CheckPermissionsActivity() {
     override fun onResume() {
         super.onResume()
         controller!!.onResume()
+        main_user_nick.text = SPUtil.getUser().name
+        Glide.with(this).setDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_icon))
+            .load(SPUtil.getUser().avatar).into(main_user_avatar)
     }
 
     override fun onPause() {
@@ -218,16 +244,17 @@ class MainActivity : CheckPermissionsActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun onLocationEvent(event: MyLocationEvent) {
-        if(mAddress?.text.toString()!=event.addr){
+        if (mAddress?.text.toString() != event.addr) {
             mAddress?.text = event.addr
-            if(!isExpand){
+            if (!isExpand) {
                 Handler().postDelayed({
-                    runOnUiThread{
+                    runOnUiThread {
                         val y = main_user_layout.height - main_user_tool.height
-                        main_user_layout.animate().y((-y).toFloat()).setInterpolator(AccelerateInterpolator()).duration = 0
+                        main_user_layout.animate().y((-y).toFloat())
+                            .setInterpolator(AccelerateInterpolator()).duration = 0
                     }
-                },1)
-               }
+                }, 1)
+            }
         }
     }
 

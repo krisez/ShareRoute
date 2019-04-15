@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import cn.krisez.framework.utils.DensityUtil;
+
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -25,11 +26,6 @@ public class MapLocation implements AMapLocationListener {
     private AMapLocationClient mlocationClient;
     //声明mLocationOption对象
     private AMapLocationClientOption mLocationOption = null;
-
-    private String mLat;
-    private String mLng;
-    private String mSpeed;
-    private String mBearing;
 
     void startLocate(Context context) {
         mlocationClient = new AMapLocationClient(context);
@@ -57,13 +53,14 @@ public class MapLocation implements AMapLocationListener {
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
-        mLat = String.valueOf(aMapLocation.getLatitude());
-        mLng = String.valueOf(aMapLocation.getLongitude());
-        mSpeed = String.valueOf(aMapLocation.getSpeed() * 3.6f);
-        mBearing = String.valueOf(aMapLocation.getBearing());
-        EventBus.getDefault().post(new MyLocationEvent(mLat,mLng,mSpeed,mBearing,aMapLocation.getAddress()));
+        String lat = String.valueOf(aMapLocation.getLatitude());
+        String lng = String.valueOf(aMapLocation.getLongitude());
+        String speed = String.valueOf(aMapLocation.getSpeed() * 3.6f);
+        String bearing = String.valueOf(aMapLocation.getBearing());
+        String addr = aMapLocation.getAddress();
+        EventBus.getDefault().post(new MyLocationEvent(lat, lng, speed, bearing, addr));
         if (Const.uploadLocation) {
-            NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUser().id, mLat, mLng, mSpeed, mBearing, DensityUtil.getTime()))
+            NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).postPos(SPUtil.getUser().id, lat, lng, speed, bearing, aMapLocation.getStreet(), DensityUtil.getTime()))
                     .handler(new ResultHandler() {
                         @Override
                         public void onSuccess(Result result) {

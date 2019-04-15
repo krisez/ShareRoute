@@ -12,6 +12,12 @@ public class User {
     public String avatar;
     public String realName;
 
+    public String getMobile() {
+        StringBuilder sb = new StringBuilder(mobile);
+        sb.replace(3,7,"*");
+        return sb.toString();
+    }
+
     @NonNull
     @Override
     public String toString() {
