@@ -60,7 +60,9 @@ public class ConversationFragment extends BaseFragment implements IIMView {
             }
             conversationBean.no = "0";
             a.refreshNotifyItemChanged(p);
-            ChatActivity.chatStart(getContext(), data, key, conversationBean.name);
+            UserBean friend = new UserBean();
+            friend.avatar = conversationBean.headUrl;
+            ChatActivity.chatStart(getContext(), data, key, conversationBean.name,friend.toString());
         });
     }
 
@@ -82,15 +84,15 @@ public class ConversationFragment extends BaseFragment implements IIMView {
                     if (null == bean.isRead || bean.isRead.equals("0")) {
                         count++;
                     }
-                    conversation.headUrl = bean.headUrl;
-                    conversation.fromId = bean.from;
-                    conversation.toId = bean.to;
-                    conversation.name = bean.name;
                 }
             }
             MessageBean msg = entry.getValue().get(entry.getValue().size() - 1);
+            conversation.headUrl = msg.headUrl;
             conversation.lastContent = msg.content;
+            conversation.name = msg.name;
             conversation.time = msg.time;
+            conversation.fromId = msg.from;
+            conversation.toId = msg.to;
             conversation.no = String.valueOf(count);
             mList.add(conversation);
         }

@@ -20,6 +20,8 @@ import cn.krisez.framework.base.BaseActivity
 import cn.krisez.framework.base.CheckPermissionsActivity
 import cn.krisez.framework.base.Presenter
 import cn.krisez.framework.utils.DensityUtil
+import cn.krisez.imchat.ChatModuleManager
+import cn.krisez.imchat.services.IMMsgService
 import cn.krisez.kotlin.net.API
 import cn.krisez.network.NetWorkUtils
 import cn.krisez.network.bean.Result
@@ -119,6 +121,13 @@ class PersonalActivity : BaseActivity() {
                     }
                 }
                 .show()}
+
+        personal_sign_out.setOnClickListener{
+            SPUtil.saveUser(null)
+            ChatModuleManager.close()
+            stopService(Intent(this,IMMsgService::class.java))
+            finish()
+        }
     }
 
     private fun reviseUser(value: String?,who:String){

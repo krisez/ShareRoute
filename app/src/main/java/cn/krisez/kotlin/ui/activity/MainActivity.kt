@@ -225,6 +225,11 @@ class MainActivity : CheckPermissionsActivity() {
     override fun onResume() {
         super.onResume()
         controller!!.onResume()
+        if(null==SPUtil.getUser()){
+            startActivity(Intent(this,LoginActivity::class.java))
+            finish()
+            return
+        }
         main_user_nick.text = SPUtil.getUser().name
         Glide.with(this).setDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_icon))
             .load(SPUtil.getUser().avatar).into(main_user_avatar)

@@ -35,7 +35,7 @@ public class ChatAdapter extends BaseMultiItemQuickAdapter<ChatTypeBean, BaseVie
             context.setText(item.msg.content);
             context.setMaxWidth(DensityUtil.getParentWidth(mContext)/3*2);
             CircleImageView civ = helper.getView(R.id.chat_msg_right_avatar);
-            Glide.with(mContext).setDefaultRequestOptions(new RequestOptions().error(R.drawable.ic_icon).placeholder(R.drawable.ic_icon)).load(item.msg.headUrl).into(civ);
+            Glide.with(mContext).setDefaultRequestOptions(new RequestOptions().error(R.drawable.ic_icon).placeholder(R.drawable.ic_icon)).load(SharePreferenceUtils.obj(mContext).getHearUrl()).into(civ);
         } else {
             helper.setGone(R.id.chat_msg_right, false);
             helper.setGone(R.id.chat_msg_left, true);

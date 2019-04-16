@@ -13,6 +13,11 @@ public class SPUtil {
 
     public static void saveUser(User user){
         SharedPreferences.Editor editor = APP.getContext().getSharedPreferences("user",Context.MODE_PRIVATE).edit();
+        if(null==user){
+            editor.clear();
+            editor.apply();
+            return;
+        }
         editor.putString("user",user.toString());
         editor.apply();
     }

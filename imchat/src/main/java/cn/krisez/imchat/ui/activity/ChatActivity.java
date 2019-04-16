@@ -18,6 +18,7 @@ import android.widget.EditText;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import cn.krisez.imchat.R;
 import cn.krisez.imchat.adapter.ChatAdapter;
 import cn.krisez.imchat.bean.ChatTypeBean;
 import cn.krisez.imchat.bean.MessageBean;
+import cn.krisez.imchat.bean.UserBean;
 import cn.krisez.imchat.client.WebSocketTransfer;
 import cn.krisez.imchat.db.IMMsgRxDbManager;
 import cn.krisez.imchat.manager.MessageManager;
@@ -41,19 +43,22 @@ public class ChatActivity extends BaseActivity implements IChatView {
     private List<ChatTypeBean> mList = new ArrayList<>();
     private String friendName;
     private String friendId;
+    private UserBean friend;
 
     private RecyclerView mRecyclerView;
     private EditText mEditText;
     private Button mButton;
 
-    public static void chatStart(Context context, String msg, String friendId, String name) {
+    public static void chatStart(Context context, String msg, String friendId, String name, String friend) {
         Intent intent = new Intent(context, ChatActivity.class);
-        if ("".equals(msg)) {
+        Log.d("ChatActivity", "chatStart:" + msg);
+        if (msg.isEmpty()||msg.equals("null")) {
             msg = new Gson().toJson(new ArrayList<>());
         }
         intent.putExtra("msgs", msg);
         intent.putExtra("friendId", friendId);
         intent.putExtra("name", name);
+        intent.putExtra("user", friend);
         context.startActivity(intent);
     }
 
@@ -85,7 +90,7 @@ public class ChatActivity extends BaseActivity implements IChatView {
         mButton = findViewById(R.id.chat_send_btn);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 //        manager.setStackFromEnd(true);
-        manager.scrollToPosition(mList.size()-1);
+        manager.scrollToPosition(mList.size() - 1);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -93,6 +98,7 @@ public class ChatActivity extends BaseActivity implements IChatView {
     private void initData() {
         friendName = getIntent().getStringExtra("name");
         friendId = getIntent().getStringExtra("friendId");
+        friend = new Gson().fromJson(getIntent().getStringExtra("user"), UserBean.class);
         mPresenter.bindServices(friendId);
         String data = getIntent().getStringExtra("msgs");
         List<MessageBean> list = new Gson().fromJson(data, new TypeToken<List<MessageBean>>() {
@@ -140,15 +146,17 @@ public class ChatActivity extends BaseActivity implements IChatView {
                 MessageManager.send(new Gson().toJson(new WebSocketTransfer(0, msg.toString())));
                 mEditText.setText("");
                 mButton.setBackgroundColor(getResources().getColor(R.color.dark_gray));
+                msg.name = friendName;
+                msg.headUrl = friend.avatar;
                 IMMsgRxDbManager.getInstance(this).insertMsg(msg).subscribe(b -> addMsg(msg));
             }
         });
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                if(dy<0){
+                if (dy < 0) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(recyclerView.getWindowToken(),0);
+                    imm.hideSoftInputFromWindow(recyclerView.getWindowToken(), 0);
                 }
             }
         });

@@ -12,4 +12,5 @@
     <string name="get_verification_code">获取验证码</string>
     <string name="verification_code">验证码</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="sign_out">注销</string>
 </resources>

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +48,8 @@ public class FriendFragment extends BaseFragment implements IIMView {
         recyclerView.setAdapter(mAdapter);
 
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
-            UserBean userBean = (UserBean) adapter.getData().get(position);
-            ChatActivity.chatStart(getContext(),"",userBean.id,userBean.name);
+            friend = (UserBean) adapter.getData().get(position);
+            mPresenter.getChatList(SharePreferenceUtils.obj(getContext()).getUserId());
         });
         onRefresh();
     }
@@ -71,8 +72,9 @@ public class FriendFragment extends BaseFragment implements IIMView {
         disableRefresh();
     }
 
+    private UserBean friend;
     @Override
     public void chatList(Map<String, List<MessageBean>> map) {
-
+        ChatActivity.chatStart(getContext(),new Gson().toJson(map.get(friend.id)),friend.id,friend.name,friend.toString());
     }
 }

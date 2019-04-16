@@ -86,6 +86,7 @@ public class IMPresenter extends Presenter {
         NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).friends(id, type)).handler(new ResultHandler() {
             @Override
             public void onSuccess(Result result) {
+                Log.d("IMPresenter", "onSuccess:" + result.extra);
                 mIIMView.getFriendsList(new Gson().fromJson(result.extra, new TypeToken<List<UserBean>>() {
                 }.getType()),type);
             }

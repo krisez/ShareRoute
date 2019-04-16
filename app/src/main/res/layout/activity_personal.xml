@@ -168,4 +168,14 @@
         android:layout_height="1dp"
         android:background="@color/black" />
 
+    <Button
+        android:id="@+id/personal_sign_out"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/main_margin_common"
+        android:background="@drawable/bg_btn_login"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:text="@string/sign_out"/>
+
 </LinearLayout>

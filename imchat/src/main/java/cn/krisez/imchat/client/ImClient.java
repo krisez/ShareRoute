@@ -31,7 +31,7 @@ public class ImClient extends WebSocketClient {
                 if (sImClient == null) {
                     try {
                         Log.d("ImClient", "getInstance:" + ImConst.id);
-                        String sUrl = "ws://192.168.1.102:4632/" + ImConst.id;
+                        String sUrl = "ws://krisez.cn:4632/" + ImConst.id;
                         sImClient = new ImClient(new URI(sUrl));
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
