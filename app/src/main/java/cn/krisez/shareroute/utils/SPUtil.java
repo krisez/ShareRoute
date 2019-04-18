@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.Nullable;
+
 import cn.krisez.shareroute.APP;
 import cn.krisez.shareroute.bean.User;
 
@@ -39,4 +41,15 @@ public class SPUtil {
         return sharedPreferences.getString("info_id","");
     }
 
+    public static void saveUserPassword(String pw){
+        SharedPreferences.Editor editor = APP.getContext().getSharedPreferences("user_pw",Context.MODE_PRIVATE).edit();
+        editor.putString("pw",pw+"SR");
+        editor.apply();
+    }
+
+    @Nullable
+    public static String getUserPassword() {
+        SharedPreferences sharedPreferences = APP.getContext().getSharedPreferences("user_pw",Context.MODE_PRIVATE);
+        return sharedPreferences.getString("pw","");
+    }
 }

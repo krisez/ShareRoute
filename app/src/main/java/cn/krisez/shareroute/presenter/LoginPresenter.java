@@ -36,11 +36,13 @@ public class LoginPresenter extends Presenter {
     }
 
     public void login(@NotNull String phone, @NotNull String password) {
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).login(phone, MD5Utils.encode(password))).handler(new ResultHandler() {
+        String encodePw = MD5Utils.encode(password);
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).login(phone,encodePw)).handler(new ResultHandler() {
             @Override
             public void onSuccess(Result result) {
                 User user = new Gson().fromJson(result.extra, User.class);
                 SPUtil.saveUser(user);
+                SPUtil.saveUserPassword(encodePw);
                 mView.loginSuccess();
             }
 
@@ -73,6 +75,7 @@ public class LoginPresenter extends Presenter {
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {
+                        SPUtil.saveUserPassword(MD5Utils.encode(pw));
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("class", MainActivity.class);
                         mView.handle(HandleType.INTENT, bundle);

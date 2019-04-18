@@ -53,9 +53,9 @@ class PersonalActivity : BaseActivity() {
         showBackIconAndClick()
         Glide.with(this).setDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_icon))
             .load(SPUtil.getUser().avatar).into(personal_avatar_at)
-        personal_nickname_at.text=SPUtil.getUser().name
-        personal_mobile_at.text=SPUtil.getUser().getMobile()
-        personal_real_name_at.text=SPUtil.getUser().realName
+        personal_nickname_at.text = SPUtil.getUser().name
+        personal_mobile_at.text = SPUtil.getUser().getMobile()
+        personal_real_name_at.text = SPUtil.getUser().realName
         personal_avatar.setOnClickListener {
             AlertDialog.Builder(this).setItems(arrayOf("拍照上传", "本地相册")) { _, which ->
                 if (which == 0) {
@@ -76,77 +76,86 @@ class PersonalActivity : BaseActivity() {
         }
         personal_nickname.setOnClickListener {
             val editText = EditText(this)
-            AlertDialog.Builder(this).setTitle("来个好听的昵称吧~").setView(editText).setNegativeButton("取消",null)
+            AlertDialog.Builder(this).setTitle("来个好听的昵称吧~").setView(editText)
+                .setNegativeButton("取消", null)
                 .setPositiveButton("确定") { _, _ ->
-                    reviseUser(editText.text.toString(),"name")
+                    reviseUser(editText.text.toString(), "name")
                 }
                 .show()
         }
         personal_mobile.setOnClickListener {
             val editText = EditText(this)
-            AlertDialog.Builder(this).setTitle("即将修改您的手机号~").setView(editText).setNegativeButton("取消",null)
+            AlertDialog.Builder(this).setTitle("即将修改您的手机号~").setView(editText)
+                .setNegativeButton("取消", null)
                 .setPositiveButton("确定") { _, _ ->
-                    reviseUser(editText.text.toString(),"mobile")
+                    reviseUser(editText.text.toString(), "mobile")
                 }
                 .show()
         }
         personal_real_name.setOnClickListener {
             val editText = EditText(this)
-            AlertDialog.Builder(this).setTitle("注意:此项仅为求助时使用(可不填)~").setView(editText).setNegativeButton("取消",null)
+            AlertDialog.Builder(this).setTitle("注意:此项仅为求助时使用(可不填)~").setView(editText)
+                .setNegativeButton("取消", null)
                 .setPositiveButton("确定") { _, _ ->
                     val user = SPUtil.getUser()
                     user.realName = editText.text.toString()
-                    reviseUser(editText.text.toString(),"realName")
+                    reviseUser(editText.text.toString(), "realName")
                 }
                 .show()
         }
         personal_password.setOnClickListener {
-            val v = View.inflate(this,R.layout.dialog_revise_password,null)
-            AlertDialog.Builder(this).setTitle("修改您的密码~").setView(v).setNegativeButton("取消",null)
+            val v = View.inflate(this, R.layout.dialog_revise_password, null)
+            AlertDialog.Builder(this).setTitle("修改您的密码~").setView(v).setNegativeButton("取消", null)
                 .setPositiveButton("确定") { _, _ ->
-                    if(v.dialog_new_pw.text.toString()==v.dialog_new_pw_again.text.toString()){
-                        val pw = v.dialog_new_pw.text.toString()
-                        NetWorkUtils.INSTANCE().create(NetWorkUtils.NetApi().api(API::class.java).updatePw(SPUtil.getUser().id,MD5Utils.encode(pw)))
-                            .handler(object:ResultHandler{
-                                override fun onSuccess(result: Result?) {
-                                    toast(result?.extra)
-                                }
+                    if (MD5Utils.encode(v.dialog_old_pw.text.toString()) + "SR" == SPUtil.getUserPassword()) {
+                        if (v.dialog_new_pw.text.toString() == v.dialog_new_pw_again.text.toString()) {
+                            val pw = v.dialog_new_pw.text.toString()
+                            NetWorkUtils.INSTANCE().create(NetWorkUtils.NetApi().api(API::class.java).updatePw(SPUtil.getUser().id, MD5Utils.encode(pw)))
+                                .handler(object : ResultHandler {
+                                    override fun onSuccess(result: Result?) {
+                                        toast(result?.extra)
+                                    }
 
-                                override fun onFailed(s: String?) {
-                                    error(s)
-                                }
-                            })
-                    }else{
-                        error("两次密码不一致")
+                                    override fun onFailed(s: String?) {
+                                        error(s)
+                                    }
+                                })
+                        } else {
+                            error("两次密码不一致！")
+                        }
+                    } else {
+                        error("原密码错误！")
                     }
                 }
-                .show()}
+                .show()
+        }
 
-        personal_sign_out.setOnClickListener{
+        personal_sign_out.setOnClickListener {
             SPUtil.saveUser(null)
             ChatModuleManager.close()
-            stopService(Intent(this,IMMsgService::class.java))
+            stopService(Intent(this, IMMsgService::class.java))
             finish()
         }
     }
 
-    private fun reviseUser(value: String?,who:String){
+    private fun reviseUser(value: String?, who: String) {
         val user = SPUtil.getUser()
-        NetWorkUtils.INSTANCE().create(NetWorkUtils.NetApi().api(API::class.java).updateUser(user.id,value,who))
-            .handler(object :ResultHandler{
+        NetWorkUtils.INSTANCE()
+            .create(NetWorkUtils.NetApi().api(API::class.java).updateUser(user.id, value, who))
+            .handler(object : ResultHandler {
                 override fun onSuccess(result: Result?) {
-                    when(who){
-                        "name"->{
+                    when (who) {
+                        "name" -> {
                             user.name = value
-                            personal_nickname_at.text=user?.name
+                            personal_nickname_at.text = user?.name
                         }
-                        "mobile"-> {
+                        "mobile" -> {
                             user.mobile = value
                             personal_mobile_at.text = user?.getMobile()
                         }
-                        "realName"->{
+                        "realName" -> {
                             user.realName = value
-                            personal_real_name_at.text=user?.realName
+                            personal_real_name_at.text = user?.realName
                         }
                     }
                     SPUtil.saveUser(user)
@@ -165,7 +174,7 @@ class PersonalActivity : BaseActivity() {
     private var tempFile: File? = null
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode== Activity.RESULT_OK){
+        if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 100 -> {
                     upLoad2Server(tempFile?.path)
@@ -184,7 +193,14 @@ class PersonalActivity : BaseActivity() {
                     if (data != null) {
                         val bitmap = data.getParcelableExtra("data") as Bitmap
                         //将bitmap转换为Uri
-                        val uri = Uri.parse(MediaStore.Images.Media.insertImage(contentResolver, bitmap, null, null))
+                        val uri = Uri.parse(
+                            MediaStore.Images.Media.insertImage(
+                                contentResolver,
+                                bitmap,
+                                null,
+                                null
+                            )
+                        )
                         //对非正确的Uri处理，这类Uri存在手机的external.db中，可以查询_data字段查出对应文件的uri
                         //在这可以拿到裁剪后的图片Uri,然后进行你想要的操作
                         upLoad2Server(uri.path)
@@ -248,13 +264,24 @@ class PersonalActivity : BaseActivity() {
     private fun upLoad2Server(path: String?) {
         var file: File? = null
         try {
-            file = File(DensityUtil.compressImage(path, Environment.getExternalStorageDirectory().path + "/随行/imgs/" + System.currentTimeMillis() + ".png", 10))
+            file = File(
+                DensityUtil.compressImage(
+                    path,
+                    Environment.getExternalStorageDirectory().path + "/随行/imgs/" + System.currentTimeMillis() + ".png",
+                    10
+                )
+            )
         } catch (e: URISyntaxException) {
             e.printStackTrace()
         }
         val requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file)
         val body = MultipartBody.Part.createFormData("mFile", file?.name, requestBody)
-        NetWorkUtils.INSTANCE().create(NetWorkUtils.NetApi().api(API::class.java).uploadFile(SPUtil.getUser().id,body))
+        NetWorkUtils.INSTANCE().create(
+            NetWorkUtils.NetApi().api(API::class.java).uploadFile(
+                SPUtil.getUser().id,
+                body
+            )
+        )
             .handler(object : ResultHandler {
                 override fun onSuccess(result: Result?) {
                     val user = SPUtil.getUser()
