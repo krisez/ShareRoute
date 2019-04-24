@@ -40,6 +40,8 @@
             android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity android:name="cn.krisez.kotlin.ui.activity.PersonalActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name="cn.krisez.kotlin.ui.activity.TraceHistoryActivity"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

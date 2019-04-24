@@ -1,28 +1,24 @@
 package cn.krisez.kotlin.ui.activity
 
-import android.content.ContentUris
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.net.Uri
-import android.os.*
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.support.annotation.RequiresApi
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.PersistableBundle
 import android.support.constraint.ConstraintLayout
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.BounceInterpolator
 import android.widget.*
 import cn.krisez.framework.base.CheckPermissionsActivity
-import cn.krisez.framework.utils.DensityUtil
 import cn.krisez.imchat.ChatModuleManager
 import cn.krisez.imchat.client.ImConst
 import cn.krisez.imchat.manager.MessageManager
 import cn.krisez.imchat.services.IMMsgService
 import cn.krisez.kotlin.net.API
+import cn.krisez.kotlin.ui.views.IMapView
 import cn.krisez.network.NetWorkUtils
 import cn.krisez.network.bean.Result
 import cn.krisez.network.handler.ResultHandler
@@ -43,18 +39,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
-import java.lang.Exception
-import java.net.URISyntaxException
 
-class MainActivity : CheckPermissionsActivity() {
+class MainActivity : CheckPermissionsActivity(), IMapView {
 
+    private var TRACE_HISTORY_CODE = 701
     private var isExpand = true
 
     private var controller: MapController? = null
@@ -88,7 +79,7 @@ class MainActivity : CheckPermissionsActivity() {
         mLocateO?.visibility = View.GONE
 
         controller = MapController(this)
-        controller?.map(mMapView)?.defaultAmap()?.create(savedInstanceState)
+        controller?.map(mMapView)?.view(this)?.defaultAmap()?.create(savedInstanceState)
 
         mAMap = mMapView?.map
         val myTrafficStyle = MyTrafficStyle()
@@ -133,7 +124,9 @@ class MainActivity : CheckPermissionsActivity() {
             ChatModuleManager.open(this, SPUtil.getUser().toString())
             main_msg_tips_dot.visibility = View.INVISIBLE
         }
-        main_user_history.setOnClickListener {}
+        main_user_history.setOnClickListener {
+            startActivityForResult(Intent(this,TraceHistoryActivity::class.java),TRACE_HISTORY_CODE)
+        }
         main_user_mail.setOnClickListener{}
         uploadLocation.setOnClickListener {
             if (Const.uploadLocation) {
@@ -261,6 +254,24 @@ class MainActivity : CheckPermissionsActivity() {
                 }, 1)
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode==TRACE_HISTORY_CODE){
+            if(resultCode==RESULT_OK){
+//                controller?.setTrace("1937821",data?.getStringExtra("start"),data?.getStringExtra("end"))
+                controller?.setTrace(SPUtil.getUser().id,data?.getStringExtra("start"),data?.getStringExtra("end"))
+            }
+        }
+    }
+
+    override fun showTips(s: String) {
+        Toast.makeText(this,s,Toast.LENGTH_SHORT).show()
+    }
+
+    override fun overTrace() {
+        Log.d("MainActivity","overTrace:？??")
     }
 
 }

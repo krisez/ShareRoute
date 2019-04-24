@@ -84,6 +84,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeRef
     @Override
     public void error(String s) {
         toast(s);
+        disableRefresh();
     }
 
     @Override

@@ -4,11 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import cn.krisez.imchat.ChatModuleManager;
-import cn.krisez.imchat.client.ImClient;
-import cn.krisez.imchat.db.DbUtils;
 import cn.krisez.network.NetWorkUtils;
-import cn.krisez.shareroute.utils.Const;
-import cn.krisez.shareroute.utils.SPUtil;
 
 
 public class APP extends Application {

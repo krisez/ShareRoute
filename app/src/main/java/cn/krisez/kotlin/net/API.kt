@@ -28,4 +28,10 @@ interface API {
     @POST("uploadFile.m")
     @Multipart
     fun uploadFile(@Query("id") id: String, @Part file: MultipartBody.Part): Observable<Result>
+
+    @GET("getTraceHistory.m")
+    fun getTraceHistory(@Query("userId")id:String):Observable<Result>
+
+    @GET("getTracePoints.m")
+    fun getTracePoints(@Query("userId")id:String,@Query("start")start:String,@Query("end")end:String):Observable<Result>
 }

@@ -26,6 +26,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
+import cn.krisez.kotlin.ui.views.IMapView;
 import cn.krisez.shareroute.R;
 import cn.krisez.shareroute.event.MyLocationEvent;
 
@@ -37,7 +38,7 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     private AMap mMap;
     private Marker mMyMarker;
     private MapLocation mapLocation;
-    //private IMainView mView;
+    private IMapView mView;
 
     public MapController(Context context) {
         this.mContext = context;
@@ -60,10 +61,10 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
         return this;
     }
 
-    /*public MapController view(IMainView view) {
+    public MapController view(IMapView view) {
         this.mView = view;
         return this;
-    }*/
+    }
 
     public MapController defaultAmap() {
         if (mapLocation == null) {
@@ -126,10 +127,10 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     /**
      * trace 设置处
      */
-    public MapController setTrace(String id) {
-        //MapTrace.INSTANCE().init(mMapView, mView);
+    public MapController setTrace(String id,String start,String end) {
+        MapTrace.INSTANCE().init(mMapView, mView);
         clearTrace();
-        MapTrace.INSTANCE().startTrace(id);
+        MapTrace.INSTANCE().startTrace(id,start,end);
         return this;
     }
 

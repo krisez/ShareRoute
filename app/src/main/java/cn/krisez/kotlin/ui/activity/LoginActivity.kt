@@ -108,10 +108,9 @@ class LoginActivity : BaseActivity(), ILoginView {
             tvCode.setOnClickListener {
                 if (etAccount?.length() != 11) {
                     tvTips?.text = "手机号有错误！"
-                    tvTips?.visibility = View.VISIBLE//TODO:删除
-                    return@setOnClickListener
+                    tvTips?.visibility = View.VISIBLE
                 }
-                tvTips?.text = "验证码：1234"
+                tvTips?.text = "验证码：1234" //TODO:删除
                 tvTips?.visibility = View.VISIBLE
                 val animator = ValueAnimator.ofInt(60, 0)
                 animator.duration = 60000

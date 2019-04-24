@@ -13,4 +13,6 @@
     <string name="verification_code">验证码</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="sign_out">注销</string>
+    <string name="distance">距离</string>
+    <string name="past">历时</string>
 </resources>

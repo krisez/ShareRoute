@@ -1,23 +1,46 @@
 package cn.krisez.shareroute.maps;
 
 import android.animation.Animator;
+import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.graphics.Color;
+import android.util.Log;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.BitmapDescriptor;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.Polyline;
+import com.amap.api.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.nio.channels.NetworkChannel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import cn.krisez.kotlin.net.API;
+import cn.krisez.kotlin.ui.views.IMapView;
+import cn.krisez.network.NetWorkUtils;
+import cn.krisez.network.bean.Result;
+import cn.krisez.network.handler.ResultHandler;
+import cn.krisez.shareroute.R;
+import cn.krisez.shareroute.bean.TrackPoint;
 
 class MapTrace {
 
     private static MapTrace INSTANCE;
 
     private Polyline mPolyline;
-    //private List<CarRoute> mList;
+    private List<TrackPoint> mList;
 
     private AMap mAMap;
-   // private IMainView mIMainView;
+    private IMapView mMapView;
 
     private MapTrace() {
     }
@@ -36,14 +59,33 @@ class MapTrace {
         return INSTANCE;
     }
 
-    public void init(MapView mapView){
+    public void init(MapView mapView, IMapView view){
         this.mAMap = mapView.getMap();
-       // mList = new ArrayList<>();
-        //this.mIMainView = view;
+        mList = new ArrayList<>();
+        this.mMapView = view;
     }
 
-    public void startTrace(String id) {
-       // mList.clear();
+    /**
+     * @param id 用户id
+     * @param start 开始时间
+     * @param end 结束时间
+     */
+    public void startTrace(String id,String start,String end) {
+        mList.clear();
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).getTracePoints(id,start,end))
+                .handler(new ResultHandler() {
+                    @Override
+                    public void onSuccess(Result result) {
+                        mList.addAll(new Gson().fromJson(result.extra,new TypeToken<List<TrackPoint>>(){}.getType()));
+                        Log.d("MapTrace", "onSuccess:" + mList.size());
+                        addPolylineInPlayGround(mList);
+                    }
+
+                    @Override
+                    public void onFailed(String s) {
+                        mMapView.showTips(s);
+                    }
+                });
     }
 
     public Polyline getPolyline() {
@@ -54,20 +96,20 @@ class MapTrace {
      * 添加轨迹线
      *
      * @param points
-     *//*
-    private void addPolylineInPlayGround(List<CarRoute> points) {
+     */
+    private void addPolylineInPlayGround(List<TrackPoint> points) {
         List<LatLng> list = new ArrayList<>();
         for (int i = 0; i < points.size(); i++) {
-            list.add(new LatLng(points.get(i).getLat(), points.get(i).getLon()));
+            list.add(new LatLng(points.get(i).getLat(), points.get(i).getLng()));
         }
-        List<Integer> colorList = new ArrayList<Integer>();
-        List<BitmapDescriptor> bitmapDescriptors = new ArrayList<BitmapDescriptor>();
+        List<Integer> colorList = new ArrayList<>();
+        List<BitmapDescriptor> bitmapDescriptors = new ArrayList<>();
 
         int[] colors = new int[]{Color.argb(255, 0, 255, 0), Color.argb(255, 255, 255, 0), Color.argb(255, 255, 0, 0)};
 
         //用一个数组来存放纹理
         List<BitmapDescriptor> textureList = new ArrayList<BitmapDescriptor>();
-        //textureList.add(BitmapDescriptorFactory.fromResource(R.drawable.custtexture));
+        textureList.add(BitmapDescriptorFactory.fromResource(R.drawable.custtexture));
 
         List<Integer> texIndexList = new ArrayList<Integer>();
         texIndexList.add(0);//对应上面的第0个纹理
@@ -87,47 +129,39 @@ class MapTrace {
                 .useGradient(true)
                 .width(18));
 
-        // LatLng latLng = new LatLng((list.get(0).latitude+list.get(list.size()-1).latitude)/2,
-        //    (list.get(0).longitude+list.get(list.size()-1).longitude)/2);
-
-        //LatLngBounds bounds = new LatLngBounds(queryPoints(list,1), queryPoints(list,2));
         LatLngBounds.Builder builder = LatLngBounds.builder();
-
         for (int i = 0; i < list.size(); i++) {
             builder.include(list.get(i));
         }
-//
-//        Log.d("MapTrace", "addPolylineInPlayGround:" + bounds.northeast);
-//        Log.d("MapTrace", "addPolylineInPlayGround:" + bounds.southwest);
         mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 0));
-        //mIMainView.traceOver();
-    }*/
+        mMapView.overTrace();
+    }
 
     /**
      * 动画效果
      */
     public Animator setAnimation(final Marker marker, float duration) {
         ValueAnimator animator;
-        /*Object[] objects = new Object[mList.size()];
+        Object[] objects = new Object[mList.size()];
         for (int i = 0; i < objects.length; i++) {
-            //objects[i] = mList.get(i);
-        }*/
-        /*animator = ValueAnimator.ofObject((TypeEvaluator<CarRoute>) (fraction, startValue, endValue) -> {
+            objects[i] = mList.get(i);
+        }
+        animator = ValueAnimator.ofObject((TypeEvaluator<TrackPoint>) (fraction, startValue, endValue) -> {
             double lat = startValue.getLat() + fraction * (endValue.getLat() - startValue.getLat());
-            double lon = startValue.getLon() + fraction * (endValue.getLon() - startValue.getLon());
+            double lng = startValue.getLng() + fraction * (endValue.getLng() - startValue.getLng());
             double speed = startValue.getSpeed() + fraction * (endValue.getSpeed() - startValue.getSpeed());
-            return new CarRoute(lon, lat, speed, getAngle(startValue.getLatLng(), endValue.getLatLng()));
+            return new TrackPoint(lng, lat, speed, getAngle(startValue.getLatLng(), endValue.getLatLng()));
         }, objects);
 
         animator.addUpdateListener(animation -> {
-            CarRoute carRoute = (CarRoute) animation.getAnimatedValue();
-            marker.setMarkerOptions(marker.getOptions().position(carRoute.getLatLng()).rotateAngle((float) carRoute.getBearing()));
+            TrackPoint carRoute = (TrackPoint) animation.getAnimatedValue();
+            marker.setMarkerOptions(marker.getOptions().position(carRoute.getLatLng()).rotateAngle(carRoute.getDirection()));
             //默认无
             //  mAMap.moveCamera(CameraUpdateFactory.changeLatLng(carRoute.getLatLng()));
         });
-        animator.setInterpolator(new SpeedInterpolator(mList, duration));
+//        animator.setInterpolator(new SpeedInterpolator(mList, duration));
         animator.setDuration((long) duration);
-        animator.start();*/
+        animator.start();
         //return animator;
         return null;
     }

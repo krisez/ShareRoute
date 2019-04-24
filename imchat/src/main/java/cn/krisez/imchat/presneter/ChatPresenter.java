@@ -61,7 +61,6 @@ public class ChatPresenter extends Presenter {
         mContext.bindService(new Intent(mContext, IMMsgService.class).putExtra("from",id),connection,0);
     }
 
-    //todo 修改收发消息进入service
     private void updateRead(String from, String to) {
         Disposable disposable = IMMsgRxDbManager.getInstance(mContext).updateMsg(from, to).subscribe(query ->
                 NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).updateAllRead(from, to)).handler(new ResultHandler() {
