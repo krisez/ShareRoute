@@ -110,6 +110,10 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
         mMap.animateCamera(CameraUpdateFactory.changeLatLng(new LatLng(mLat, mLng)));
     }
 
+    public void noCenter(){
+        isCenter = false;
+    }
+
     /**
      * marker设置处
      */

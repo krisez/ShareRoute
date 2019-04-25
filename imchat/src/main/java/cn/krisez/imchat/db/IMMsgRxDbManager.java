@@ -133,6 +133,11 @@ public class IMMsgRxDbManager {
         }
     }
 
+    //清空数据库
+    public void clearMsg(){
+        db.execute("delete from "+DbConstant.MSG_TABLE+";");
+    }
+
     public Observable<Boolean> updateMsg(String from, String to) {
         return Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             ContentValues contentValues = new ContentValues();

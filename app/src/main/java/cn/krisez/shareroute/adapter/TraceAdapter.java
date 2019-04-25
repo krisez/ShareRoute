@@ -21,7 +21,7 @@ public class TraceAdapter extends BaseQuickAdapter<TraceHistoryBean, BaseViewHol
         helper.setText(R.id.item_trace_start,item.startAddr);
         helper.setText(R.id.item_trace_end,item.endAddr);
         helper.setText(R.id.item_trace_time,item.createTime);
-        helper.setText(R.id.item_trace_distrance,item.distance/1+"米");
+        helper.setText(R.id.item_trace_distrance,(int)item.distance+"米");
         helper.setText(R.id.item_trace_past,item.pasTime);
     }
 }

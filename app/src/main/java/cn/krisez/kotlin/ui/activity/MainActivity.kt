@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.PersistableBundle
 import android.support.constraint.ConstraintLayout
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
@@ -15,7 +16,9 @@ import android.widget.*
 import cn.krisez.framework.base.CheckPermissionsActivity
 import cn.krisez.imchat.ChatModuleManager
 import cn.krisez.imchat.client.ImConst
+import cn.krisez.imchat.client.WebSocketTransfer
 import cn.krisez.imchat.manager.MessageManager
+import cn.krisez.imchat.receiver.MessageReceiver
 import cn.krisez.imchat.services.IMMsgService
 import cn.krisez.kotlin.net.API
 import cn.krisez.kotlin.ui.views.IMapView
@@ -24,9 +27,11 @@ import cn.krisez.network.bean.Result
 import cn.krisez.network.handler.ResultHandler
 import cn.krisez.shareroute.R
 import cn.krisez.shareroute.bean.TrackPoint
+import cn.krisez.shareroute.bean.UrgentBean
 import cn.krisez.shareroute.event.MyLocationEvent
 import cn.krisez.shareroute.maps.MapController
 import cn.krisez.shareroute.maps.MarkerInfoWindow
+import cn.krisez.shareroute.ui.LoadFragment
 import cn.krisez.shareroute.utils.Const
 import cn.krisez.shareroute.utils.SPUtil
 import com.amap.api.maps.AMap
@@ -42,8 +47,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.*
 
-class MainActivity : CheckPermissionsActivity(), IMapView {
+class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
 
     private var TRACE_HISTORY_CODE = 701
     private var isExpand = true
@@ -115,19 +121,35 @@ class MainActivity : CheckPermissionsActivity(), IMapView {
 
         main_user_id.text = SPUtil.getUser().id
         main_user_avatar.setOnClickListener {
-            startActivity(Intent(this,PersonalActivity::class.java))
+            startActivity(Intent(this, PersonalActivity::class.java))
         }
-        main_user_setup.setOnClickListener {}
+        main_user_setup.setOnClickListener {
+            startActivity(Intent(this, LoadFragment::class.java).putExtra("cls", "set"))
+        }
         main_user_help.setOnClickListener {}
-        main_user_urgent.setOnClickListener {}
+        main_user_urgent.setOnClickListener {
+            MessageManager.send(Gson().toJson(WebSocketTransfer(77,Gson().toJson(UrgentBean(SPUtil.getUser().id, SPUtil.getEmergency(), SPUtil.getUser().realName)))))
+            if (!Const.uploadLocation) {
+                uploadLocation.performClick()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val view = it as ImageView
+                view.drawable.setTint(resources.getColor(R.color.vector_reset))
+            }
+            Toast.makeText(this, "紧急联系中~", Toast.LENGTH_SHORT).show()
+            MessageManager.addReceiver(77,this)
+        }
         main_user_message.setOnClickListener {
             ChatModuleManager.open(this, SPUtil.getUser().toString())
             main_msg_tips_dot.visibility = View.INVISIBLE
         }
         main_user_history.setOnClickListener {
-            startActivityForResult(Intent(this,TraceHistoryActivity::class.java),TRACE_HISTORY_CODE)
+            startActivityForResult(
+                Intent(this, TraceHistoryActivity::class.java),
+                TRACE_HISTORY_CODE
+            )
         }
-        main_user_mail.setOnClickListener{}
+        main_user_mail.setOnClickListener {}
         uploadLocation.setOnClickListener {
             if (Const.uploadLocation) {
                 Const.uploadLocation = false
@@ -169,11 +191,15 @@ class MainActivity : CheckPermissionsActivity(), IMapView {
         }
 
         main_user_layout.setOnClickListener {
-            Log.d("MainActivity","initView:只为了拦截点击事件")
+            Log.d("MainActivity", "initView:只为了拦截点击事件")
         }
     }
 
-    private var a = 10
+    override fun receiver(msg: String?) {
+        runOnUiThread{
+            AlertDialog.Builder(this).setTitle("求助").setMessage("已发送相关通知，您也可以将您的求助码通过其他软件发给其他人让除紧急人(包含)帮助您。求助码:"+Gson().fromJson(msg,Result::class.java).extra).show()
+        }
+    }
 
     //得到另一个人的info
     private fun getOthersInfo() {
@@ -218,8 +244,8 @@ class MainActivity : CheckPermissionsActivity(), IMapView {
     override fun onResume() {
         super.onResume()
         controller!!.onResume()
-        if(null==SPUtil.getUser()){
-            startActivity(Intent(this,LoginActivity::class.java))
+        if (null == SPUtil.getUser()) {
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
         }
@@ -258,20 +284,25 @@ class MainActivity : CheckPermissionsActivity(), IMapView {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==TRACE_HISTORY_CODE){
-            if(resultCode==RESULT_OK){
+        if (requestCode == TRACE_HISTORY_CODE) {
+            if (resultCode == RESULT_OK) {
 //                controller?.setTrace("1937821",data?.getStringExtra("start"),data?.getStringExtra("end"))
-                controller?.setTrace(SPUtil.getUser().id,data?.getStringExtra("start"),data?.getStringExtra("end"))
+                controller?.setTrace(
+                    SPUtil.getUser().id,
+                    data?.getStringExtra("start"),
+                    data?.getStringExtra("end")
+                )
             }
         }
     }
 
     override fun showTips(s: String) {
-        Toast.makeText(this,s,Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
     }
 
     override fun overTrace() {
-        Log.d("MainActivity","overTrace:？??")
+        controller?.noCenter()
+        Log.d("MainActivity", "overTrace:？??")
     }
 
 }

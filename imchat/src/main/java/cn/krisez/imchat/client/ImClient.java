@@ -31,7 +31,7 @@ public class ImClient extends WebSocketClient {
                 if (sImClient == null) {
                     try {
                         Log.d("ImClient", "getInstance:" + ImConst.id);
-                        String sUrl = "ws://krisez.cn:4632/" + ImConst.id;
+                        String sUrl = "ws://192.168.43.97:4632/" + ImConst.id;
                         sImClient = new ImClient(new URI(sUrl));
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
@@ -60,11 +60,7 @@ public class ImClient extends WebSocketClient {
     public void onMessage(String message) {
         Log.d("ImClient", "onMessage:" + message);
         WebSocketTransfer bean = new Gson().fromJson(message, WebSocketTransfer.class);
-        if (bean.type == 0) {
-            Objects.requireNonNull(map.get(0)).receiver(bean.json);
-        } else {
-            Objects.requireNonNull(map.get(bean.type)).receiver(bean.json);
-        }
+        Objects.requireNonNull(map.get(bean.type)).receiver(bean.json);
     }
 
     @Override

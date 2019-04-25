@@ -15,4 +15,9 @@
     <string name="sign_out">注销</string>
     <string name="distance">距离</string>
     <string name="past">历时</string>
+    <string name="setting_access_loacte">禁止他人查看自己的位置\n求助时自动关闭</string>
+    <string name="emergency_contact">紧急联系人</string>
+    <string name="clear_img_cache">清除图片缓存</string>
+    <string name="clear_im_cache">清空聊天记录</string>
+    <string name="check_update">检查更新</string>
 </resources>

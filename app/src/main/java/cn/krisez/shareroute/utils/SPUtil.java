@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import cn.krisez.shareroute.APP;
@@ -47,9 +48,29 @@ public class SPUtil {
         editor.apply();
     }
 
-    @Nullable
     public static String getUserPassword() {
         SharedPreferences sharedPreferences = APP.getContext().getSharedPreferences("user_pw",Context.MODE_PRIVATE);
         return sharedPreferences.getString("pw","");
+    }
+
+    public static void setEmetgency(String contact){
+        SharedPreferences.Editor editor = APP.getContext().getSharedPreferences("set",Context.MODE_PRIVATE).edit();
+        editor.putString("emergency",contact);
+        editor.apply();
+    }
+
+    public static String getEmergency() {
+        SharedPreferences sharedPreferences = APP.getContext().getSharedPreferences("set",Context.MODE_PRIVATE);
+        return sharedPreferences.getString("emergency","");
+    }
+
+    public static void setAccessLocate(boolean checked) {
+        SharedPreferences.Editor editor = APP.getContext().getSharedPreferences("set",Context.MODE_PRIVATE).edit();
+        editor.putBoolean("accessLocate",checked);
+        editor.apply();
+    }
+    public static boolean isAccessLocate() {
+        SharedPreferences sharedPreferences = APP.getContext().getSharedPreferences("set",Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("accessLocate",false);
     }
 }

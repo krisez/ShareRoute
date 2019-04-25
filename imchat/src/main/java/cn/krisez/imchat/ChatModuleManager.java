@@ -8,6 +8,7 @@ import android.util.Log;
 import cn.krisez.imchat.client.ImClient;
 import cn.krisez.imchat.client.ImConst;
 import cn.krisez.imchat.db.DbUtils;
+import cn.krisez.imchat.db.IMMsgRxDbManager;
 import cn.krisez.imchat.ui.activity.IMActivity;
 import cn.krisez.imchat.utils.SharePreferenceUtils;
 
@@ -35,5 +36,12 @@ public class ChatModuleManager {
      */
     public static void close() {
         ImClient.getInstance().close();
+    }
+
+    /**
+     * 清空IM本地数据库
+     */
+    public static void clearMsg(Context context){
+        IMMsgRxDbManager.getInstance(context).clearMsg();
     }
 }
