@@ -20,4 +20,14 @@
     <string name="clear_img_cache">清除图片缓存</string>
     <string name="clear_im_cache">清空聊天记录</string>
     <string name="check_update">检查更新</string>
+    <string name="wrong_mobile">手机号不正确</string>
+    <string name="about_question">关于及反馈</string>
+    <string name="describe_msg">查看即时通讯下的各个功能</string>
+    <string name="describe_history">查看出行的历史轨迹，需要上传过数据，要求至少五分钟，结束上传后10分钟左右方可查看</string>
+    <string name="describe_upload">上传实时数据</string>
+    <string name="describe_mail">查看系统通知信息</string>
+    <string name="describe_setup">设置项</string>
+    <string name="describe_urgent">开启求助功能，将自动开启数据上传以及自动发送通知至紧急联系人列表，如未添加将优先建议110。并将生成的求助码返回可通过其他软件寻求他人帮助。</string>
+    <string name="describe_alert">如果有请求帮助消息将自动打开并处理跟踪定位追查保护TA的安全；或者通过求助码查询他人定位信息</string>
+    <string name="describe_more">如果还有不理解的地方，请点击下方反馈或者联系开发人员</string>
 </resources>

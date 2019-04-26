@@ -34,4 +34,7 @@ interface API {
 
     @GET("getTracePoints.m")
     fun getTracePoints(@Query("userId")id:String,@Query("start")start:String,@Query("end")end:String):Observable<Result>
+
+    @POST("sendSMSCode.m")
+    fun sendSMS(@Query("mobile")mobile: String): Observable<Result>
 }

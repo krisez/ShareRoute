@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import cn.krisez.kotlin.ui.fragment.AboutAndQuestionFragment;
 import cn.krisez.kotlin.ui.fragment.SettingFragment;
 import cn.krisez.shareroute.R;
 import cn.krisez.shareroute.utils.FManager;
@@ -29,6 +30,9 @@ public class LoadFragment extends AppCompatActivity{
         switch (cls) {
             case "set":
                 FManager.fmReplace(getSupportFragmentManager(), new SettingFragment(), R.id.load_fragment);
+                break;
+            case "aq":
+                FManager.fmReplace(getSupportFragmentManager(), new AboutAndQuestionFragment(), R.id.load_fragment);
                 break;
         }
     }

@@ -69,7 +69,11 @@ class LoginActivity : BaseActivity(), ILoginView {
         val id = if (type == 1) R.layout.window_login else R.layout.window_register
         val constraintLayout = layoutInflater.inflate(id, null)
         popupWindow =
-            PopupWindow(constraintLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            PopupWindow(
+                constraintLayout,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            );
         popupWindow?.isFocusable = true
         //点击空白处时，隐藏掉pop窗口
         popupWindow?.isFocusable = true
@@ -106,30 +110,30 @@ class LoginActivity : BaseActivity(), ILoginView {
             val etCode = layout.findViewById<EditText>(R.id.register_code)
             val tvCode = layout.findViewById<TextView>(R.id.register_get_code)
             tvCode.setOnClickListener {
-                if (etAccount?.length() != 11) {
+                if (etAccount?.text.toString().length != 11) {
                     tvTips?.text = "手机号有错误！"
                     tvTips?.visibility = View.VISIBLE
-                }
-                tvTips?.text = "验证码：1234" //TODO:删除
-                tvTips?.visibility = View.VISIBLE
-                val animator = ValueAnimator.ofInt(60, 0)
-                animator.duration = 60000
-                animator.interpolator = LinearInterpolator()
-                animator.addUpdateListener { value ->
-                    val s = "剩下${value.animatedValue}s"
-                    tvCode.text = s
-                    if (value.animatedValue == 0) {
-                        tvCode.setTextColor(resources.getColor(R.color.colorAccent))
-                        tvCode.isClickable = true
-                        tvCode.setText(R.string.get_verification_code)
+                } else {
+                    presenter?.sendSMDCode(etAccount.text.toString())
+                    val animator = ValueAnimator.ofInt(60, 0)
+                    animator.duration = 60000
+                    animator.interpolator = LinearInterpolator()
+                    animator.addUpdateListener { value ->
+                        val s = "剩下${value.animatedValue}s"
+                        tvCode.text = s
+                        if (value.animatedValue == 0) {
+                            tvCode.setTextColor(resources.getColor(R.color.colorAccent))
+                            tvCode.isClickable = true
+                            tvCode.setText(R.string.get_verification_code)
+                        }
                     }
+                    animator.start()
+                    tvCode.setTextColor(Color.GRAY)
+                    tvCode.isClickable = false
                 }
-                animator.start()
-                tvCode.setTextColor(Color.GRAY)
-                tvCode.isClickable = false
             }
             layout.findViewById<Button>(R.id.btn_register).setOnClickListener {
-                if ("1234" == etCode.text.toString()) {
+                if (mCode == etCode.text.toString()) {
                     presenter!!.register(etAccount.text.toString())
                 } else {
                     tvTips?.visibility = View.VISIBLE
@@ -179,6 +183,11 @@ class LoginActivity : BaseActivity(), ILoginView {
                 toMain()
             }
             .show()
+    }
+
+    private var mCode = "0000"
+    override fun code(code: String) {
+        mCode = code
     }
 
     private fun toMain() {

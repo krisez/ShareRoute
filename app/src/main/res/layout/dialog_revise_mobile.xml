@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/revise_new_mobile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_phone"
+        android:drawableLeft="@drawable/ic_phone"
+        android:hint="@string/phone_number"
+        android:imeOptions="actionNext"
+        android:inputType="number"
+        android:lines="1"
+        android:maxLength="11"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/revise_code"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/verification_code"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:lines="1"
+        app:layout_constraintBottom_toTopOf="@id/revise_tips"
+        app:layout_constraintEnd_toStartOf="@id/revise_get_code"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/revise_new_mobile" />
+
+    <TextView
+        android:id="@+id/revise_get_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/get_verification_code"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/text_body"
+        app:layout_constraintBottom_toTopOf="@id/revise_tips"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/revise_new_mobile" />
+
+    <TextView
+        android:id="@+id/revise_tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:gravity="center"
+        android:text="@string/wrong_mobile"
+        android:textColor="#ff0000"
+        android:textSize="@dimen/text_body"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</android.support.constraint.ConstraintLayout>

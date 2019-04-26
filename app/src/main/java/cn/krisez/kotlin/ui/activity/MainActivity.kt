@@ -47,7 +47,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
 
 class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
 
@@ -126,7 +125,6 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
         main_user_setup.setOnClickListener {
             startActivity(Intent(this, LoadFragment::class.java).putExtra("cls", "set"))
         }
-        main_user_help.setOnClickListener {}
         main_user_urgent.setOnClickListener {
             MessageManager.send(Gson().toJson(WebSocketTransfer(77,Gson().toJson(UrgentBean(SPUtil.getUser().id, SPUtil.getEmergency(), SPUtil.getUser().realName)))))
             if (!Const.uploadLocation) {
@@ -138,7 +136,9 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
             }
             Toast.makeText(this, "紧急联系中~", Toast.LENGTH_SHORT).show()
             MessageManager.addReceiver(77,this)
+            SPUtil.setAccessLocate(false)
         }
+        main_user_alert.setOnClickListener {}
         main_user_message.setOnClickListener {
             ChatModuleManager.open(this, SPUtil.getUser().toString())
             main_msg_tips_dot.visibility = View.INVISIBLE

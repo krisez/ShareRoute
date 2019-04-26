@@ -1,9 +1,11 @@
 package cn.krisez.kotlin.ui.activity
 
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.ContentUris
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +16,7 @@ import android.support.annotation.RequiresApi
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.EditText
 import android.widget.Toast
 import cn.krisez.framework.base.BaseActivity
@@ -23,16 +26,19 @@ import cn.krisez.framework.utils.DensityUtil
 import cn.krisez.imchat.ChatModuleManager
 import cn.krisez.imchat.services.IMMsgService
 import cn.krisez.kotlin.net.API
+import cn.krisez.kotlin.ui.views.IPersonView
 import cn.krisez.network.NetWorkUtils
 import cn.krisez.network.bean.Result
 import cn.krisez.network.handler.ResultHandler
 import cn.krisez.shareroute.R
 import cn.krisez.shareroute.bean.User
+import cn.krisez.shareroute.presenter.PersonalPresenter
 import cn.krisez.shareroute.utils.MD5Utils
 import cn.krisez.shareroute.utils.SPUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_personal.*
+import kotlinx.android.synthetic.main.dialog_revise_mobile.view.*
 import kotlinx.android.synthetic.main.dialog_revise_password.*
 import kotlinx.android.synthetic.main.dialog_revise_password.view.*
 import okhttp3.MediaType
@@ -41,11 +47,15 @@ import okhttp3.RequestBody
 import java.io.File
 import java.net.URISyntaxException
 
-class PersonalActivity : BaseActivity() {
+class PersonalActivity : BaseActivity(), IPersonView {
+
+    private var mPresenter: PersonalPresenter? = null
+
     override fun newView(): View = View.inflate(this, R.layout.activity_personal, null)
 
     override fun presenter(): Presenter? {
-        return null
+        mPresenter = PersonalPresenter(this, this)
+        return mPresenter
     }
 
     override fun init(bundle: Bundle?) {
@@ -84,13 +94,37 @@ class PersonalActivity : BaseActivity() {
                 .show()
         }
         personal_mobile.setOnClickListener {
-            val editText = EditText(this)
-            AlertDialog.Builder(this).setTitle("即将修改您的手机号~").setView(editText)
+            val view = layoutInflater.inflate(R.layout.dialog_revise_mobile, null)
+            AlertDialog.Builder(this).setTitle("即将修改您的手机号~").setView(view)
                 .setNegativeButton("取消", null)
                 .setPositiveButton("确定") { _, _ ->
-                    reviseUser(editText.text.toString(), "mobile")
+                    if (mCode == view.revise_code.text.toString()) {
+                        reviseUser(view.revise_new_mobile.text.toString(),"mobile")
+                    }
                 }
                 .show()
+            view.revise_get_code.setOnClickListener {
+                if (view.revise_new_mobile.text.toString().length != 11) {
+                    view.revise_tips.visibility = View.VISIBLE
+                } else {
+                    mPresenter?.sendSMDCode(view.revise_new_mobile.text.toString())
+                    val animator = ValueAnimator.ofInt(60, 0)
+                    animator.duration = 60000
+                    animator.interpolator = LinearInterpolator()
+                    animator.addUpdateListener { value ->
+                        val s = "剩下${value.animatedValue}s"
+                        view.revise_get_code.text = s
+                        if (value.animatedValue == 0) {
+                            view.revise_get_code.setTextColor(resources.getColor(R.color.colorAccent))
+                            view.revise_get_code.isClickable = true
+                            view.revise_get_code.setText(R.string.get_verification_code)
+                        }
+                    }
+                    animator.start()
+                    view.revise_get_code.setTextColor(Color.GRAY)
+                    view.revise_get_code.isClickable = false
+                }
+            }
         }
         personal_real_name.setOnClickListener {
             val editText = EditText(this)
@@ -110,7 +144,12 @@ class PersonalActivity : BaseActivity() {
                     if (MD5Utils.encode(v.dialog_old_pw.text.toString()) + "SR" == SPUtil.getUserPassword()) {
                         if (v.dialog_new_pw.text.toString() == v.dialog_new_pw_again.text.toString()) {
                             val pw = v.dialog_new_pw.text.toString()
-                            NetWorkUtils.INSTANCE().create(NetWorkUtils.NetApi().api(API::class.java).updatePw(SPUtil.getUser().id, MD5Utils.encode(pw)))
+                            NetWorkUtils.INSTANCE().create(
+                                NetWorkUtils.NetApi().api(API::class.java).updatePw(
+                                    SPUtil.getUser().id,
+                                    MD5Utils.encode(pw)
+                                )
+                            )
                                 .handler(object : ResultHandler {
                                     override fun onSuccess(result: Result?) {
                                         toast(result?.extra)
@@ -177,7 +216,7 @@ class PersonalActivity : BaseActivity() {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 100 -> {
-                    upLoad2Server(tempFile?.path)
+                    mPresenter?.upLoad2Server(tempFile?.path)
 //                crop(Uri.fromFile(tempFile))
                 }
                 101 -> {
@@ -203,7 +242,7 @@ class PersonalActivity : BaseActivity() {
                         )
                         //对非正确的Uri处理，这类Uri存在手机的external.db中，可以查询_data字段查出对应文件的uri
                         //在这可以拿到裁剪后的图片Uri,然后进行你想要的操作
-                        upLoad2Server(uri.path)
+                        mPresenter?.upLoad2Server(uri.path)
                     }
                 }
             }
@@ -216,7 +255,7 @@ class PersonalActivity : BaseActivity() {
     }
 
     private fun handlePathBeforeKitKat(data: Intent?) {
-        upLoad2Server(data?.data?.path)
+        mPresenter?.upLoad2Server(data?.data?.path)
     }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
@@ -246,7 +285,7 @@ class PersonalActivity : BaseActivity() {
             "content".equals(uri?.scheme, true) -> path = getImagePath(uri, null)
             "file".equals(uri?.scheme, true) -> path = uri?.path
         }
-        upLoad2Server(path)
+        mPresenter?.upLoad2Server(path)
     }
 
     private fun getImagePath(uri: Uri?, selection: String?): String? {
@@ -261,41 +300,15 @@ class PersonalActivity : BaseActivity() {
         return path
     }
 
-    private fun upLoad2Server(path: String?) {
-        var file: File? = null
-        try {
-            file = File(
-                DensityUtil.compressImage(
-                    path,
-                    Environment.getExternalStorageDirectory().path + "/随行/imgs/" + System.currentTimeMillis() + ".png",
-                    10
-                )
-            )
-        } catch (e: URISyntaxException) {
-            e.printStackTrace()
-        }
-        val requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file)
-        val body = MultipartBody.Part.createFormData("mFile", file?.name, requestBody)
-        NetWorkUtils.INSTANCE().create(
-            NetWorkUtils.NetApi().api(API::class.java).uploadFile(
-                SPUtil.getUser().id,
-                body
-            )
-        )
-            .handler(object : ResultHandler {
-                override fun onSuccess(result: Result?) {
-                    val user = SPUtil.getUser()
-                    user.avatar = result?.extra
-                    SPUtil.saveUser(user)
-                    Glide.with(this@PersonalActivity)
-                        .setDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_icon))
-                        .load(user.avatar).into(personal_avatar_at)
-                }
+    private var mCode = "0000"
+    override fun code(code: String) {
+        mCode = code
+    }
 
-                override fun onFailed(s: String?) {
-                    Toast.makeText(this@PersonalActivity, s, Toast.LENGTH_SHORT).show()
-                }
-            })
+    override fun uploadHead(avatar: String) {
+        Glide.with(this)
+            .setDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_icon))
+            .load(avatar).into(personal_avatar_at)
     }
 
     private fun crop(uri: Uri?) {

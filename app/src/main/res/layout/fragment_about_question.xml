@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/describe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_content_areas"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_message"
+            android:drawableLeft="@drawable/ic_message"
+            android:drawablePadding="4dp"
+            android:text="@string/describe_msg"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_body" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:drawableStart="@drawable/ic_history"
+            android:drawableLeft="@drawable/ic_history"
+            android:drawablePadding="4dp"
+            android:text="@string/describe_history"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_body" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:drawableStart="@drawable/ic_upload"
+            android:drawableLeft="@drawable/ic_upload"
+            android:drawablePadding="4dp"
+            android:text="@string/describe_upload"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_body" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:drawableStart="@drawable/ic_mail"
+            android:drawableLeft="@drawable/ic_mail"
+            android:drawablePadding="4dp"
+            android:text="@string/describe_mail"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_body" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:drawableStart="@drawable/ic_setup"
+            android:drawableLeft="@drawable/ic_setup"
+            android:drawablePadding="4dp"
+            android:text="@string/describe_setup"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_body" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:drawableStart="@drawable/ic_flashlight"
+            android:drawableLeft="@drawable/ic_flashlight"
+            android:drawablePadding="4dp"
+            android:text="@string/describe_urgent"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_body" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:drawableStart="@drawable/ic_alert"
+            android:drawableLeft="@drawable/ic_alert"
+            android:drawablePadding="4dp"
+            android:text="@string/describe_alert"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_body" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="@string/describe_more"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_body" />
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="64dp"
+            android:src="@mipmap/ic_icon" />
+
+        <TextView
+            android:id="@+id/version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:textColor="@color/dark_gray" />
+
+        <TextView
+            android:id="@+id/fankui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="反馈"
+            android:textColor="@color/colorAccent" />
+    </LinearLayout>
+</ScrollView>

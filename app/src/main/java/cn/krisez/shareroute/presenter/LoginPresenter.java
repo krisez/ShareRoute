@@ -70,6 +70,21 @@ public class LoginPresenter extends Presenter {
                 });
     }
 
+    public void sendSMDCode(String mobile){
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).sendSMS(mobile))
+                .handler(new ResultHandler() {
+                    @Override
+                    public void onSuccess(Result result) {
+                        mView.code(result.extra);
+                    }
+
+                    @Override
+                    public void onFailed(String s) {
+
+                    }
+                });
+    }
+
     public void updatePw(String pw) {
         NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).updatePw(SPUtil.getUser().id,MD5Utils.encode(pw)))
                 .handler(new ResultHandler() {

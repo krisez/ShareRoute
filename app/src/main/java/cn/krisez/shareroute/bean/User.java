@@ -14,7 +14,7 @@ public class User {
 
     public String getMobile() {
         StringBuilder sb = new StringBuilder(mobile);
-        sb.replace(3,7,"*");
+        sb.replace(3,7,"****");
         return sb.toString();
     }
 
