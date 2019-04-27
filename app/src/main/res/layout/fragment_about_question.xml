@@ -119,5 +119,22 @@
             android:layout_gravity="center"
             android:text="反馈"
             android:textColor="@color/colorAccent" />
+
+        <TextView
+            android:id="@+id/check_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/check_update"
+            android:layout_marginTop="@dimen/margin_small"
+            android:textColor="@color/colorAccent" />
+
+        <ProgressBar
+            android:id="@+id/update_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            style="?android:attr/progressBarStyleHorizontal"
+            />
     </LinearLayout>
 </ScrollView>

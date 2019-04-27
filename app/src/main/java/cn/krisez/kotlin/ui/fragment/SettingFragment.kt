@@ -2,7 +2,6 @@ package cn.krisez.kotlin.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
@@ -13,7 +12,6 @@ import android.widget.Toast
 import cn.krisez.imchat.ChatModuleManager
 import cn.krisez.shareroute.R
 import cn.krisez.shareroute.ui.LoadFragment
-import cn.krisez.shareroute.utils.FManager
 import cn.krisez.shareroute.utils.GlideCacheUtil
 import cn.krisez.shareroute.utils.SPUtil
 import kotlinx.android.synthetic.main.fragment_setting.view.*
@@ -62,9 +60,6 @@ class SettingFragment : Fragment() {
         }
         view.set_about_question.setOnClickListener {
             startActivity(Intent(activity,LoadFragment::class.java).putExtra("cls","aq"))
-        }
-        view.set_check_update.setOnClickListener {
-
         }
     }
 }

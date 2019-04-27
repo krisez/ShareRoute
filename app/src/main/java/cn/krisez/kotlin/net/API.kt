@@ -4,6 +4,12 @@ import cn.krisez.network.bean.Result
 import io.reactivex.Observable
 import okhttp3.MultipartBody
 import retrofit2.http.*
+import retrofit2.http.Url
+import okhttp3.ResponseBody
+import retrofit2.http.GET
+import retrofit2.http.Streaming
+
+
 
 interface API {
 
@@ -37,4 +43,14 @@ interface API {
 
     @POST("sendSMSCode.m")
     fun sendSMS(@Query("mobile")mobile: String): Observable<Result>
+
+    @GET("getLastVersion.m")
+    fun getLastVer(@Query("versionName")versionName:String ):Observable<Result>
+
+    @POST("fankui.m")
+    fun fankui(@Query("content")content:String ,@Query("userId")id:String):Observable<Result>
+
+    @Streaming
+    @GET
+    fun downloadFile(@Url fileUrl: String):Observable<ResponseBody>
 }

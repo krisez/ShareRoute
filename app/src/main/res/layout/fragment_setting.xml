@@ -100,16 +100,5 @@
         android:layout_margin="@dimen/margin_small"
         android:text="@string/about_question"
         android:textSize="@dimen/tv_normal_size" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/dark_gray" />
-    <TextView
-        android:id="@+id/set_check_update"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_small"
-        android:text="@string/check_update"
-        android:textSize="@dimen/tv_normal_size" />
 
 </LinearLayout>

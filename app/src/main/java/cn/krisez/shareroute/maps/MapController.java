@@ -23,6 +23,7 @@ import com.amap.api.maps.model.MyLocationStyle;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -151,6 +152,10 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     public MapController clearTrace() {
         MapTrace.INSTANCE().removeLine();
         return this;
+    }
+
+    public void startNewHelp(String toString) {
+
     }
 
     public void onSaveInstanceState(Bundle bundle) {

@@ -2,10 +2,8 @@ package cn.krisez.kotlin.ui.activity
 
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.PersistableBundle
+import android.net.Uri
+import android.os.*
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AlertDialog
 import android.util.Log
@@ -28,12 +26,15 @@ import cn.krisez.network.handler.ResultHandler
 import cn.krisez.shareroute.R
 import cn.krisez.shareroute.bean.TrackPoint
 import cn.krisez.shareroute.bean.UrgentBean
+import cn.krisez.shareroute.bean.VersionBean
 import cn.krisez.shareroute.event.MyLocationEvent
+import cn.krisez.shareroute.llistener.DownloadListener
 import cn.krisez.shareroute.maps.MapController
 import cn.krisez.shareroute.maps.MarkerInfoWindow
 import cn.krisez.shareroute.ui.LoadFragment
 import cn.krisez.shareroute.utils.Const
 import cn.krisez.shareroute.utils.SPUtil
+import cn.krisez.shareroute.utils.Utils
 import com.amap.api.maps.AMap
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.MapView
@@ -43,12 +44,14 @@ import com.amap.api.maps.model.MyTrafficStyle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_about_question.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
+class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
 
     private var TRACE_HISTORY_CODE = 701
     private var isExpand = true
@@ -72,8 +75,7 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
         ImConst.id = SPUtil.getUser().id
         startService(
             Intent(this, IMMsgService::class.java).putExtra(
-                "user",
-                SPUtil.getUser().toString()
+                "user", SPUtil.getUser().toString()
             ).putExtra("cls", MainActivity::class.java)
         )
         initView(savedInstanceState)
@@ -113,10 +115,8 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
         mEditTextInfo = findViewById(R.id.et_other_info_id)
         mConstraintLayout = findViewById(R.id.csl_getInfo)
         mAddress = findViewById(R.id.main_user_address)
-        val uploadLocation = findViewById<ImageView>(R.id.main_user_upload_location)
-        val layoutOperation = findViewById<ImageView>(R.id.main_tool_op)
         //得到另外人的信息
-        findViewById<Button>(R.id.btn_get_other_info).setOnClickListener { getOthersInfo() }
+        btn_get_other_info.setOnClickListener { getOthersInfo() }
 
         main_user_id.text = SPUtil.getUser().id
         main_user_avatar.setOnClickListener {
@@ -126,31 +126,37 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
             startActivity(Intent(this, LoadFragment::class.java).putExtra("cls", "set"))
         }
         main_user_urgent.setOnClickListener {
-            MessageManager.send(Gson().toJson(WebSocketTransfer(77,Gson().toJson(UrgentBean(SPUtil.getUser().id, SPUtil.getEmergency(), SPUtil.getUser().realName)))))
-            if (!Const.uploadLocation) {
-                uploadLocation.performClick()
+            if (!Const.isUrgent) {
+                MessageManager.send(Gson().toJson(WebSocketTransfer(77, Gson().toJson(UrgentBean(SPUtil.getUser().id, SPUtil.getEmergency(), SPUtil.getUser().realName)))))
+                MessageManager.addReceiver(77, this)
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    main_user_urgent.drawable.setTint(resources.getColor(R.color.vector_reset))
+                }
+                Toast.makeText(this@MainActivity, "取消求助...", Toast.LENGTH_LONG).show()
+                MessageManager.removeReceiver(77)
+                MessageManager.send(Gson().toJson(WebSocketTransfer(-77, SPUtil.getUser().id)))
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val view = it as ImageView
-                view.drawable.setTint(resources.getColor(R.color.vector_reset))
-            }
-            Toast.makeText(this, "紧急联系中~", Toast.LENGTH_SHORT).show()
-            MessageManager.addReceiver(77,this)
-            SPUtil.setAccessLocate(false)
         }
-        main_user_alert.setOnClickListener {}
+        main_user_alert.setOnClickListener {
+            val editText = EditText(this)
+            AlertDialog.Builder(this).setTitle("输入您收到的求助码").setView(editText).setPositiveButton(R.string.sure) {_,_->
+                if (editText.text.toString().isNotEmpty()) {
+                    controller?.startNewHelp(editText.text.toString())
+                }
+            }.setNegativeButton(R.string.cancel, null).show()
+        }
         main_user_message.setOnClickListener {
             ChatModuleManager.open(this, SPUtil.getUser().toString())
             main_msg_tips_dot.visibility = View.INVISIBLE
         }
         main_user_history.setOnClickListener {
             startActivityForResult(
-                Intent(this, TraceHistoryActivity::class.java),
-                TRACE_HISTORY_CODE
+                Intent(this, TraceHistoryActivity::class.java), TRACE_HISTORY_CODE
             )
         }
         main_user_mail.setOnClickListener {}
-        uploadLocation.setOnClickListener {
+        main_user_upload_location.setOnClickListener {
             if (Const.uploadLocation) {
                 Const.uploadLocation = false
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -169,20 +175,18 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
                 }
             }
         }
-        layoutOperation.setOnClickListener {
+        main_tool_op.setOnClickListener {
             if (isExpand) {
                 //收缩操作
                 isExpand = false
-                layoutOperation.setImageResource(R.drawable.ic_unfold)
+                main_tool_op.setImageResource(R.drawable.ic_unfold)
                 val y = main_user_layout.height - main_user_tool.height
-                main_user_layout.animate().y((-y).toFloat())
-                    .setInterpolator(AccelerateInterpolator()).duration = 500
+                main_user_layout.animate().y((-y).toFloat()).setInterpolator(AccelerateInterpolator()).duration = 500
             } else {
                 //展开操作
                 isExpand = true
-                layoutOperation.setImageResource(R.drawable.ic_packup)
-                main_user_layout.animate().y(0f).setInterpolator(BounceInterpolator()).duration =
-                    500
+                main_tool_op.setImageResource(R.drawable.ic_packup)
+                main_user_layout.animate().y(0f).setInterpolator(BounceInterpolator()).duration = 500
             }
         }
 
@@ -191,13 +195,84 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
         }
 
         main_user_layout.setOnClickListener {
-            Log.d("MainActivity", "initView:只为了拦截点击事件")
+            Log.i("MainActivity", "initView:只为了拦截点击事件")
         }
+
+        if (SPUtil.checkUpdate()) {
+            checkUpdate()
+        }
+
+        queryIsHelp()
+    }
+
+    private fun queryIsHelp() {
+        //        NetWorkUtils.INSTANCE().create()
+    }
+
+    private fun checkUpdate() {
+        NetWorkUtils.INSTANCE().create(
+            NetWorkUtils.NetApi().api(API::class.java).getLastVer(
+                Utils.getAppVersionName(this)
+            )
+        ).handler(object : ResultHandler {
+            override fun onSuccess(result: Result?) {
+                val bean = Gson().fromJson(result?.extra, VersionBean::class.java)
+                AlertDialog.Builder(this@MainActivity).setTitle("有新版本发布").setMessage("是否更新").setPositiveButton(R.string.sure) { _, _ ->
+                    Const.downLoadFile = true
+                    val d1 = NetWorkUtils.NetApi().api(API::class.java).downloadFile(bean.url).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe { body ->
+                        Toast.makeText(this@MainActivity, "正在下载...", Toast.LENGTH_SHORT).show()
+                        Utils.writeFile2Disk(body, object : DownloadListener {
+                            override fun onProgress(progress: Int) {
+
+                            }
+
+                            override fun onFinish() {
+                                Const.downLoadFile = false
+                                val i = Intent(Intent.ACTION_VIEW)
+                                val filePath = Environment.getExternalStorageDirectory().path + "/随行/download/lastVersion.apk"
+                                i.setDataAndType(
+                                    Uri.parse("file://$filePath"), "application/vnd.android.package-archive"
+                                )
+                                if ((Build.VERSION.SDK_INT >= 24)) { //判读版本是否在7.0以上
+                                    i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
+                                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(i)
+                            }
+                        })
+                    }
+                }.setNegativeButton(R.string.cancel) { _, _ ->
+                    SPUtil.saveUpdateAppOpreation()
+                }.show()
+            }
+
+            override fun onFailed(e: String?) {
+                Toast.makeText(this@MainActivity, e, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun receiver(msg: String?) {
-        runOnUiThread{
-            AlertDialog.Builder(this).setTitle("求助").setMessage("已发送相关通知，您也可以将您的求助码通过其他软件发给其他人让除紧急人(包含)帮助您。求助码:"+Gson().fromJson(msg,Result::class.java).extra).show()
+        runOnUiThread {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                main_user_urgent.drawable.setTint(resources.getColor(R.color.colorAccent))
+            }
+            if (!Const.uploadLocation) {
+                main_user_upload_location.performClick()
+            }
+            Toast.makeText(this, "紧急联系中~", Toast.LENGTH_SHORT).show()
+            SPUtil.setAccessLocate(false)
+            var code = Gson().fromJson(msg, Result::class.java).extra
+            if (code.length > 5) {
+                code = code.substring(1, 5) + "\n紧急人不在线，请通过其他方式紧急联系"
+            }
+            AlertDialog.Builder(this).setTitle("求助").setMessage(
+                "已发送相关通知，您也可以将您的求助码通过其他软件发给其他人让除紧急人(包含)帮助您。求助码:$code"
+            ).setPositiveButton("拨号") {_,_->
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:${SPUtil.getEmergency()}")
+                startActivity(intent)
+            }.show()
         }
     }
 
@@ -212,29 +287,25 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
     }
 
     fun locateOthers(view: View) {
-        NetWorkUtils.INSTANCE()
-            .create(NetWorkUtils.NetApi().api(API::class.java).getOtherPos(SPUtil.getOtherInfo()))
-            .handler(object : ResultHandler {
-                override fun onSuccess(result: Result?) {
-                    val s = result?.extra
-                    val point = Gson().fromJson(s, TrackPoint::class.java)
-                    val lat = point.lat.toDouble()
-                    val lng = point.lng.toDouble()
-                    val direction = point.direction.toFloat()
-                    val latLng = LatLng(lat, lng)
-                    mAMap!!.animateCamera(CameraUpdateFactory.changeLatLng(latLng))
-                    controller!!.setMarkerOption(
-                        MarkerOptions().title(SPUtil.getOtherInfo())
-                            .rotateAngle(direction)
-                            .position(latLng)
-                    )
-                }
+        NetWorkUtils.INSTANCE().create(NetWorkUtils.NetApi().api(API::class.java).getOtherPos(SPUtil.getOtherInfo())).handler(object : ResultHandler {
+            override fun onSuccess(result: Result?) {
+                val s = result?.extra
+                val point = Gson().fromJson(s, TrackPoint::class.java)
+                val lat = point.lat.toDouble()
+                val lng = point.lng.toDouble()
+                val direction = point.direction.toFloat()
+                val latLng = LatLng(lat, lng)
+                mAMap!!.animateCamera(CameraUpdateFactory.changeLatLng(latLng))
+                controller!!.setMarkerOption(
+                    MarkerOptions().title(SPUtil.getOtherInfo()).rotateAngle(direction).position(latLng)
+                )
+            }
 
-                override fun onFailed(msg: String?) {
-                    Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
-                }
+            override fun onFailed(msg: String?) {
+                Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+            }
 
-            })
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
@@ -250,8 +321,7 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
             return
         }
         main_user_nick.text = SPUtil.getUser().name
-        Glide.with(this).setDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_icon))
-            .load(SPUtil.getUser().avatar).into(main_user_avatar)
+        Glide.with(this).setDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_icon)).load(SPUtil.getUser().avatar).into(main_user_avatar)
     }
 
     override fun onPause() {
@@ -266,16 +336,14 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
         ChatModuleManager.close()
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public fun onLocationEvent(event: MyLocationEvent) {
+    @Subscribe(threadMode = ThreadMode.MAIN) public fun onLocationEvent(event: MyLocationEvent) {
         if (mAddress?.text.toString() != event.addr) {
             mAddress?.text = event.addr
             if (!isExpand) {
                 Handler().postDelayed({
                     runOnUiThread {
                         val y = main_user_layout.height - main_user_tool.height
-                        main_user_layout.animate().y((-y).toFloat())
-                            .setInterpolator(AccelerateInterpolator()).duration = 0
+                        main_user_layout.animate().y((-y).toFloat()).setInterpolator(AccelerateInterpolator()).duration = 0
                     }
                 }, 1)
             }
@@ -286,11 +354,8 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TRACE_HISTORY_CODE) {
             if (resultCode == RESULT_OK) {
-//                controller?.setTrace("1937821",data?.getStringExtra("start"),data?.getStringExtra("end"))
                 controller?.setTrace(
-                    SPUtil.getUser().id,
-                    data?.getStringExtra("start"),
-                    data?.getStringExtra("end")
+                    SPUtil.getUser().id, data?.getStringExtra("start"), data?.getStringExtra("end")
                 )
             }
         }
@@ -302,7 +367,6 @@ class MainActivity : CheckPermissionsActivity(), IMapView,MessageReceiver {
 
     override fun overTrace() {
         controller?.noCenter()
-        Log.d("MainActivity", "overTrace:？??")
     }
 
 }
