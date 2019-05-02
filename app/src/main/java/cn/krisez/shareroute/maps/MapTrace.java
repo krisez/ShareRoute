@@ -19,7 +19,6 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.nio.channels.NetworkChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -59,24 +58,25 @@ class MapTrace {
         return INSTANCE;
     }
 
-    public void init(MapView mapView, IMapView view){
+    public void init(MapView mapView, IMapView view) {
         this.mAMap = mapView.getMap();
         mList = new ArrayList<>();
         this.mMapView = view;
     }
 
     /**
-     * @param id 用户id
+     * @param id    用户id
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      */
-    public void startTrace(String id,String start,String end) {
+    public void startTrace(String id, String start, String end) {
         mList.clear();
-        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).getTracePoints(id,start,end))
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).getTracePoints(id, start, end))
                 .handler(new ResultHandler() {
                     @Override
                     public void onSuccess(Result result) {
-                        mList.addAll(new Gson().fromJson(result.extra,new TypeToken<List<TrackPoint>>(){}.getType()));
+                        mList.addAll(new Gson().fromJson(result.extra, new TypeToken<List<TrackPoint>>() {
+                        }.getType()));
                         Log.d("MapTrace", "onSuccess:" + mList.size());
                         addPolylineInPlayGround(mList);
                     }
@@ -89,6 +89,13 @@ class MapTrace {
     }
 
     public Polyline getPolyline() {
+        if (mPolyline == null) {
+            mPolyline = mAMap.addPolyline(new PolylineOptions().setCustomTexture(BitmapDescriptorFactory.fromResource(R.drawable.custtexture)) //setCustomTextureList(bitmapDescriptors)
+//				.setCustomTextureIndex(texIndexList)
+                    .addAll(new ArrayList<>())
+                    .useGradient(true)
+                    .width(18));
+        }
         return mPolyline;
     }
 
@@ -154,8 +161,8 @@ class MapTrace {
         }, objects);
 
         animator.addUpdateListener(animation -> {
-            TrackPoint carRoute = (TrackPoint) animation.getAnimatedValue();
-            marker.setMarkerOptions(marker.getOptions().position(carRoute.getLatLng()).rotateAngle(carRoute.getDirection()));
+            TrackPoint point = (TrackPoint) animation.getAnimatedValue();
+            marker.setMarkerOptions(marker.getOptions().position(point.getLatLng()).rotateAngle(point.getDirection()));
             //默认无
             //  mAMap.moveCamera(CameraUpdateFactory.changeLatLng(carRoute.getLatLng()));
         });
@@ -194,4 +201,9 @@ class MapTrace {
     public void destroy() {
         INSTANCE = null;
     }
+
+    void startNewHelp(int type, String content) {
+
+    }
+
 }

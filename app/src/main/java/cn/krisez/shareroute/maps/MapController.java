@@ -2,33 +2,38 @@ package cn.krisez.shareroute.maps;
 
 import android.animation.Animator;
 import android.content.Context;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
-
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
+
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
-import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
-import com.amap.api.maps.model.MyLocationStyle;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import cn.krisez.framework.utils.DensityUtil;
+import cn.krisez.kotlin.net.API;
 import cn.krisez.kotlin.ui.views.IMapView;
+import cn.krisez.network.NetWorkUtils;
+import cn.krisez.network.bean.Result;
+import cn.krisez.network.handler.ResultHandler;
 import cn.krisez.shareroute.R;
+import cn.krisez.shareroute.bean.TrackPoint;
 import cn.krisez.shareroute.event.MyLocationEvent;
 
 public class MapController /*implements AMapLocationListener, LocationSource*/ {
@@ -89,7 +94,7 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     private boolean isCenter = true;
     private double mLat;
     private double mLng;
-//    private float mBearing;
+    //    private float mBearing;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMyLocationEvent(MyLocationEvent event) {
@@ -111,7 +116,7 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
         mMap.animateCamera(CameraUpdateFactory.changeLatLng(new LatLng(mLat, mLng)));
     }
 
-    public void noCenter(){
+    public void noCenter() {
         isCenter = false;
     }
 
@@ -132,10 +137,10 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
     /**
      * trace 设置处
      */
-    public MapController setTrace(String id,String start,String end) {
+    public MapController setTrace(String id, String start, String end) {
         MapTrace.INSTANCE().init(mMapView, mView);
         clearTrace();
-        MapTrace.INSTANCE().startTrace(id,start,end);
+        MapTrace.INSTANCE().startTrace(id, start, end);
         return this;
     }
 
@@ -154,9 +159,53 @@ public class MapController /*implements AMapLocationListener, LocationSource*/ {
         return this;
     }
 
-    public void startNewHelp(String toString) {
-
+    /**
+     * @param type    0,求助码；1，id
+     * @param content
+     */
+    public void startNewHelp(int type, String content) {
+        MapTrace.INSTANCE().init(mMapView, mView);
+        clearTrace();
+        time = DensityUtil.getTime();
+        this.type = type;
+        this.content = content;
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mHandler.sendEmptyMessage(0);
+            }
+        }, 0, 5000);
     }
+
+    private String time = "";
+    private int type = 0;
+    private String content = "";
+    private Handler mHandler = new Handler(msg -> {
+        NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(API.class).realTimeGps(type, content, time))
+                .handler(new ResultHandler() {
+                    @Override
+                    public void onSuccess(Result result) {
+                        List<LatLng> list = MapTrace.INSTANCE().getPolyline().getPoints();
+                        TrackPoint point = new Gson().fromJson(result.extra, TrackPoint.class);
+                        time = point.createTime;
+                        LatLng latLng = new LatLng(point.getLat(), point.getLng());
+                        list.add(latLng);
+                        MapTrace.INSTANCE().getPolyline().setPoints(list);
+                        if (mMarker != null) {
+                            mMarker.setMarkerOptions(mMarker.getOptions().position(latLng).rotateAngle(Float.parseFloat(point.direction)));
+                        } else {
+                            setMarkerOption(new MarkerOptions().title(point.userId).rotateAngle(Float.parseFloat(point.direction)).position(latLng));
+                        }
+                    }
+
+                    @Override
+                    public void onFailed(String s) {
+                        Log.e("MapTrack", "onFailed: " + s);
+                    }
+                });
+        return true;
+    });
+
 
     public void onSaveInstanceState(Bundle bundle) {
         if (mMapView != null) {

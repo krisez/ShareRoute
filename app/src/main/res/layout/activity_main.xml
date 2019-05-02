@@ -169,42 +169,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/main_user_layout"
         app:srcCompat="@drawable/ic_locate" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/csl_getInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_small"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <EditText
-            android:id="@+id/et_other_info_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@id/btn_get_other_info"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/btn_get_other_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/vip"
-            android:text="@string/sure"
-            android:textColor="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/et_other_info_id"
-            app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
-
-    <ImageButton
-        android:id="@+id/ib_locate_other"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_margin="@dimen/margin_small"
-        android:onClick="locateOthers"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/selector_locate" />
-
 </android.support.constraint.ConstraintLayout>

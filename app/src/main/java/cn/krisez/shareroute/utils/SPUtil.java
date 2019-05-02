@@ -37,11 +37,6 @@ public class SPUtil {
         editor.apply();
     }
 
-    public static String getOtherInfo() {
-        SharedPreferences sharedPreferences = APP.getContext().getSharedPreferences("other_info", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("info_id", "");
-    }
-
     public static void saveUserPassword(String pw) {
         SharedPreferences.Editor editor = APP.getContext().getSharedPreferences("user_pw", Context.MODE_PRIVATE).edit();
         editor.putString("pw", pw + "SR");

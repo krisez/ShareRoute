@@ -50,6 +50,9 @@ interface API {
     @POST("fankui.m")
     fun fankui(@Query("content")content:String ,@Query("userId")id:String):Observable<Result>
 
+    @GET("realTimeGps.m")
+    fun realTimeGps(@Query("type")type:Int,@Query("content")content:String,@Query("time")time:String):Observable<Result>
+
     @Streaming
     @GET
     fun downloadFile(@Url fileUrl: String):Observable<ResponseBody>

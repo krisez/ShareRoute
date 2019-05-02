@@ -4,13 +4,15 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.*
-import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.BounceInterpolator
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import cn.krisez.framework.base.CheckPermissionsActivity
 import cn.krisez.imchat.ChatModuleManager
 import cn.krisez.imchat.client.ImConst
@@ -24,7 +26,6 @@ import cn.krisez.network.NetWorkUtils
 import cn.krisez.network.bean.Result
 import cn.krisez.network.handler.ResultHandler
 import cn.krisez.shareroute.R
-import cn.krisez.shareroute.bean.TrackPoint
 import cn.krisez.shareroute.bean.UrgentBean
 import cn.krisez.shareroute.bean.VersionBean
 import cn.krisez.shareroute.event.MyLocationEvent
@@ -36,17 +37,13 @@ import cn.krisez.shareroute.utils.Const
 import cn.krisez.shareroute.utils.SPUtil
 import cn.krisez.shareroute.utils.Utils
 import com.amap.api.maps.AMap
-import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.MapView
-import com.amap.api.maps.model.LatLng
-import com.amap.api.maps.model.MarkerOptions
 import com.amap.api.maps.model.MyTrafficStyle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_about_question.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -59,10 +56,7 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
     private var controller: MapController? = null
     private var mMarkerInfoWindow: MarkerInfoWindow? = null
 
-    private var mLocateO: ImageButton? = null
     private var mMapView: MapView? = null
-    private var mEditTextInfo: EditText? = null
-    private var mConstraintLayout: ConstraintLayout? = null
     private var mAddress: TextView? = null
 
     private var mAMap: AMap? = null
@@ -73,18 +67,12 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
 
         EventBus.getDefault().register(this)
         ImConst.id = SPUtil.getUser().id
-        startService(
-            Intent(this, IMMsgService::class.java).putExtra(
-                "user", SPUtil.getUser().toString()
-            ).putExtra("cls", MainActivity::class.java)
-        )
+        startService(Intent(this, IMMsgService::class.java).putExtra("user", SPUtil.getUser().toString()).putExtra("cls", MainActivity::class.java))
         initView(savedInstanceState)
         initMap(savedInstanceState)
     }
 
     private fun initMap(savedInstanceState: Bundle?) {
-        mLocateO?.visibility = View.GONE
-
         controller = MapController(this)
         controller?.map(mMapView)?.view(this)?.defaultAmap()?.create(savedInstanceState)
 
@@ -104,19 +92,11 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
             Toast.makeText(this@MainActivity, it.title, Toast.LENGTH_SHORT).show()
             true
         }
-        MessageManager.addReceiver(0) {
-            Log.d("MainActivity", "initMap:$it")
-        }
     }
 
     private fun initView(savedInstanceState: Bundle?) {
         mMapView = findViewById(R.id.map_view)
-        mLocateO = findViewById(R.id.ib_locate_other)
-        mEditTextInfo = findViewById(R.id.et_other_info_id)
-        mConstraintLayout = findViewById(R.id.csl_getInfo)
         mAddress = findViewById(R.id.main_user_address)
-        //得到另外人的信息
-        btn_get_other_info.setOnClickListener { getOthersInfo() }
 
         main_user_id.text = SPUtil.getUser().id
         main_user_avatar.setOnClickListener {
@@ -129,6 +109,7 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
             if (!Const.isUrgent) {
                 MessageManager.send(Gson().toJson(WebSocketTransfer(77, Gson().toJson(UrgentBean(SPUtil.getUser().id, SPUtil.getEmergency(), SPUtil.getUser().realName)))))
                 MessageManager.addReceiver(77, this)
+                Const.isUrgent = true
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     main_user_urgent.drawable.setTint(resources.getColor(R.color.vector_reset))
@@ -136,15 +117,29 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
                 Toast.makeText(this@MainActivity, "取消求助...", Toast.LENGTH_LONG).show()
                 MessageManager.removeReceiver(77)
                 MessageManager.send(Gson().toJson(WebSocketTransfer(-77, SPUtil.getUser().id)))
+                Const.isUrgent = true
             }
         }
         main_user_alert.setOnClickListener {
-            val editText = EditText(this)
-            AlertDialog.Builder(this).setTitle("输入您收到的求助码").setView(editText).setPositiveButton(R.string.sure) {_,_->
-                if (editText.text.toString().isNotEmpty()) {
-                    controller?.startNewHelp(editText.text.toString())
+            if(!Const.isHelp){
+                val editText = EditText(this)
+                AlertDialog.Builder(this).setTitle("输入您收到的求助码").setView(editText).setPositiveButton(R.string.sure) { _, _ ->
+                    if (editText.text.toString().isNotEmpty()) {
+                        controller?.startNewHelp(0,editText.text.toString())
+                        Const.isHelp = true
+                    }
+                }.setNegativeButton(R.string.cancel, null).show()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    main_user_alert.drawable.setTint(resources.getColor(R.color.colorAccent))
                 }
-            }.setNegativeButton(R.string.cancel, null).show()
+            }else{
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    main_user_alert.drawable.setTint(resources.getColor(R.color.vector_reset))
+                }
+                Const.isHelp = false
+                Toast.makeText(this,"取消帮助",Toast.LENGTH_SHORT).show()
+            }
+
         }
         main_user_message.setOnClickListener {
             ChatModuleManager.open(this, SPUtil.getUser().toString())
@@ -206,15 +201,23 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
     }
 
     private fun queryIsHelp() {
-        //        NetWorkUtils.INSTANCE().create()
+        MessageManager.addReceiver(99){
+            runOnUiThread {
+                AlertDialog.Builder(this).setTitle("求助！").setMessage("id为{$it}需要您的帮助")
+                    .setPositiveButton("开始追踪！"){_,_->
+                        Const.isHelp = true
+                        controller?.startNewHelp(1,it)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            main_user_alert.drawable.setTint(resources.getColor(R.color.colorAccent))
+                        }
+                    }.setNegativeButton("取消",null)
+                    .show()
+            }
+        }
     }
 
     private fun checkUpdate() {
-        NetWorkUtils.INSTANCE().create(
-            NetWorkUtils.NetApi().api(API::class.java).getLastVer(
-                Utils.getAppVersionName(this)
-            )
-        ).handler(object : ResultHandler {
+        NetWorkUtils.INSTANCE().create(NetWorkUtils.NetApi().api(API::class.java).getLastVer(Utils.getAppVersionName(this))).handler(object : ResultHandler {
             override fun onSuccess(result: Result?) {
                 val bean = Gson().fromJson(result?.extra, VersionBean::class.java)
                 AlertDialog.Builder(this@MainActivity).setTitle("有新版本发布").setMessage("是否更新").setPositiveButton(R.string.sure) { _, _ ->
@@ -247,7 +250,7 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
             }
 
             override fun onFailed(e: String?) {
-                Toast.makeText(this@MainActivity, e, Toast.LENGTH_SHORT).show()
+                SPUtil.saveUpdateAppOpreation()
             }
         })
     }
@@ -263,49 +266,17 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
             Toast.makeText(this, "紧急联系中~", Toast.LENGTH_SHORT).show()
             SPUtil.setAccessLocate(false)
             var code = Gson().fromJson(msg, Result::class.java).extra
-            if (code.length > 5) {
-                code = code.substring(1, 5) + "\n紧急人不在线，请通过其他方式紧急联系"
+            if (code.length > 4) {
+                code = code.substring(1, 5) + "\n紧急联系人不在线，请通过其他方式紧急联系"
             }
             AlertDialog.Builder(this).setTitle("求助").setMessage(
                 "已发送相关通知，您也可以将您的求助码通过其他软件发给其他人让除紧急人(包含)帮助您。求助码:$code"
-            ).setPositiveButton("拨号") {_,_->
+            ).setPositiveButton("拨号") { _, _ ->
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = Uri.parse("tel:${SPUtil.getEmergency()}")
                 startActivity(intent)
             }.show()
         }
-    }
-
-    //得到另一个人的info
-    private fun getOthersInfo() {
-        val s = mEditTextInfo!!.text.toString()
-        if (s != "") {
-            SPUtil.setOtherInfo(s)
-            mConstraintLayout!!.visibility = View.GONE
-            mLocateO!!.visibility = View.VISIBLE
-        }
-    }
-
-    fun locateOthers(view: View) {
-        NetWorkUtils.INSTANCE().create(NetWorkUtils.NetApi().api(API::class.java).getOtherPos(SPUtil.getOtherInfo())).handler(object : ResultHandler {
-            override fun onSuccess(result: Result?) {
-                val s = result?.extra
-                val point = Gson().fromJson(s, TrackPoint::class.java)
-                val lat = point.lat.toDouble()
-                val lng = point.lng.toDouble()
-                val direction = point.direction.toFloat()
-                val latLng = LatLng(lat, lng)
-                mAMap!!.animateCamera(CameraUpdateFactory.changeLatLng(latLng))
-                controller!!.setMarkerOption(
-                    MarkerOptions().title(SPUtil.getOtherInfo()).rotateAngle(direction).position(latLng)
-                )
-            }
-
-            override fun onFailed(msg: String?) {
-                Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
-            }
-
-        })
     }
 
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
