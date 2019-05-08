@@ -106,6 +106,10 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
             startActivity(Intent(this, LoadFragment::class.java).putExtra("cls", "set"))
         }
         main_user_urgent.setOnClickListener {
+            if(!Utils.isConnect(this)){
+                Toast.makeText(this@MainActivity, "网络不可用...", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
             if (!Const.isUrgent) {
                 MessageManager.send(Gson().toJson(WebSocketTransfer(77, Gson().toJson(UrgentBean(SPUtil.getUser().id, SPUtil.getEmergency(), SPUtil.getUser().realName)))))
                 MessageManager.addReceiver(77, this)
@@ -127,11 +131,12 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
                     if (editText.text.toString().isNotEmpty()) {
                         controller?.startNewHelp(0,editText.text.toString())
                         Const.isHelp = true
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            main_user_alert.drawable.setTint(resources.getColor(R.color.colorAccent))
+                        }
                     }
                 }.setNegativeButton(R.string.cancel, null).show()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    main_user_alert.drawable.setTint(resources.getColor(R.color.colorAccent))
-                }
+
             }else{
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     main_user_alert.drawable.setTint(resources.getColor(R.color.vector_reset))

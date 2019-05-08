@@ -1,8 +1,12 @@
 package cn.krisez.shareroute.utils;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Log;
+
+import org.java_websocket.WebSocket;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import cn.krisez.imchat.manager.MessageManager;
 import cn.krisez.network.bean.Result;
 import cn.krisez.network.handler.ResultHandler;
 import cn.krisez.shareroute.llistener.DownloadListener;
@@ -111,5 +116,14 @@ public class Utils {
                         listener.onFinish();
                     }
                 });
+    }
+
+    public static boolean isConnect(Context context){
+        if(MessageManager.instance().getReadyState()== WebSocket.READYSTATE.NOT_YET_CONNECTED){
+            return false;
+        }
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isAvailable();
     }
 }

@@ -1,5 +1,7 @@
 package cn.krisez.imchat.manager;
 
+import org.java_websocket.WebSocket;
+
 import java.nio.ByteBuffer;
 
 import cn.krisez.imchat.receiver.MessageReceiver;
@@ -8,22 +10,16 @@ import cn.krisez.imchat.client.ImClient;
 public class MessageManager {
 
     public static void send(String text) {
-        instance().send(text);
-    }
-
-    public static void send(byte[] data) {
-        instance().send(data);
-    }
-
-    public static void send(ByteBuffer buffer) {
-        instance().send(buffer);
+        if(instance().getReadyState() != WebSocket.READYSTATE.NOT_YET_CONNECTED){
+            instance().send(text);
+        }
     }
 
     public static void addReceiver(int tag,MessageReceiver receiver) {
         instance().addMsgReceiver(tag,receiver);
     }
 
-    private static ImClient instance(){
+    public static ImClient instance(){
         return ImClient.getInstance();
     }
 
