@@ -81,4 +81,15 @@ public class SPUtil {
         long time = sharedPreferences.getLong("updateApp", 0L);
         return System.currentTimeMillis() - time > 24 * 60 * 60 * 1000;
     }
+
+    public static void saveMailTime(String time){
+        SharedPreferences.Editor editor = APP.getContext().getSharedPreferences("mail",Context.MODE_PRIVATE).edit();
+        editor.putString("time",time);
+        editor.apply();
+    }
+
+    public static String getMailTime(){
+        SharedPreferences sharedPreferences = APP.getContext().getSharedPreferences("mail", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("time", "2019-01-01 00:00:00");
+    }
 }

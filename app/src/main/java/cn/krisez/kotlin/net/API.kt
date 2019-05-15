@@ -53,6 +53,9 @@ interface API {
     @GET("realTimeGps.m")
     fun realTimeGps(@Query("type")type:Int,@Query("content")content:String,@Query("time")time:String):Observable<Result>
 
+    @GET("getMail.m")
+    fun getMail(@Query("time")time:String):Observable<Result>
+
     @Streaming
     @GET
     fun downloadFile(@Url fileUrl: String):Observable<ResponseBody>

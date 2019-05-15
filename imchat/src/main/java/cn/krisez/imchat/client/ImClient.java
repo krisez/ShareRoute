@@ -30,7 +30,6 @@ public class ImClient extends WebSocketClient {
             synchronized (ImClient.class) {
                 if (sImClient == null) {
                     try {
-                        Log.d("ImClient", "getInstance:" + ImConst.id);
                         String sUrl = "ws://own.krisez.cn:4632/" + ImConst.id;
                         sImClient = new ImClient(new URI(sUrl));
                     } catch (URISyntaxException e) {

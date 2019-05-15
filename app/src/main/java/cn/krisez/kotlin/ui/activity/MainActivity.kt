@@ -155,7 +155,9 @@ class MainActivity : CheckPermissionsActivity(), IMapView, MessageReceiver {
                 Intent(this, TraceHistoryActivity::class.java), TRACE_HISTORY_CODE
             )
         }
-        main_user_mail.setOnClickListener {}
+        main_user_mail.setOnClickListener {
+            startActivity(Intent(this,SysNotifyActivity::class.java))
+        }
         main_user_upload_location.setOnClickListener {
             if (Const.uploadLocation) {
                 Const.uploadLocation = false

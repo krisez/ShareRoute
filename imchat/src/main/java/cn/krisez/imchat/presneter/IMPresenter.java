@@ -22,8 +22,10 @@ import cn.krisez.imchat.utils.MsgParseUtils;
 import cn.krisez.network.NetWorkUtils;
 import cn.krisez.network.bean.Result;
 import cn.krisez.network.handler.ResultHandler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class IMPresenter extends Presenter {
 
@@ -39,7 +41,8 @@ public class IMPresenter extends Presenter {
     }
 
     public void getChatList(String userId) {
-        Disposable d = IMMsgRxDbManager.getInstance(mContext).queryMsg().subscribe(queryMsgBean ->
+        Disposable d = IMMsgRxDbManager.getInstance(mContext).queryMsg().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(queryMsgBean ->
                 NetWorkUtils.INSTANCE().create(new NetWorkUtils.NetApi().api(Api.class).chatList(userId, queryMsgBean.time, queryMsgBean.index + ""))
                         .handler(new ResultHandler() {
                             @Override
