@@ -13,6 +13,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
@@ -74,7 +75,9 @@ class PersonalActivity : BaseActivity(), IPersonView {
                         Environment.getExternalStorageDirectory().path + "/随行/imgs",
                         "temp.png"
                     )
-                    val uri = Uri.fromFile(tempFile)
+                    val uri = FileProvider.getUriForFile(
+                        this, "$packageName.fileprovider",
+                        tempFile!!)
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
                     startActivityForResult(intent, 100)//携带请求码
                 } else {

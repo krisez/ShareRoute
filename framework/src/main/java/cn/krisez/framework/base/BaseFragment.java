@@ -78,10 +78,11 @@ public abstract class BaseFragment extends Fragment implements IBaseView, SwipeR
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         if (mPresenter != null) {
             mPresenter.onDestroy();
         }
+        super.onDestroyView();
+
     }
 
     public void disableRefresh(){

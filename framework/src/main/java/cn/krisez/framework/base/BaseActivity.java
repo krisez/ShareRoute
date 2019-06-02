@@ -106,10 +106,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeRef
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (mPresenter != null) {
             mPresenter.onDestroy();
         }
+        super.onDestroy();
     }
 
     public void disableRefresh(){

@@ -117,15 +117,19 @@ public class IMMsgService extends Service {
     public boolean onUnbind(Intent intent) {
         myBinder.listener = null;
         fromId = "";
-        Log.d("IMMsgService", "onUnbind:" + "??");
-        return super.onUnbind(intent);
+        return true;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        onBind(intent);
     }
 
     @Override
     public void onDestroy() {
-        Log.d("IMMsgService", "onDestroy:" + "???");
         MessageManager.removeReceiver(0);
         MessageManager.removeReceiver(66);
+        MessageManager.removeReceiver(901);
         super.onDestroy();
     }
 }

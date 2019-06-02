@@ -54,6 +54,16 @@
         <activity android:name="cn.krisez.kotlin.ui.activity.SysNotifyActivity"
             android:screenOrientation="portrait"/>
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="cn.krisez.shareroute.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="9a95d965145b51457bc2787e947d24f0" />
